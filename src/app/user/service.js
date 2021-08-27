@@ -17,17 +17,12 @@ class UserService {
 	}
 
 	async save() {
-		let result;
-		const session = await mongoose.startSession();
-		await session.withTransaction(async (session) => {
-			const user = await User.findOne({ email: this.email }).session(session);
+		const user = await User.findOne({ email: this.email });
+		if (user) throw new Exception(httpStatus.CONFLICT, 'user Already exists');
 
-			if (user) throw new Exception(httpStatus.CONFLICT, 'user Already exists');
+		const result = await new User(this).save();
 
-			result = await new User(this).save({ session });
-
-			if (!result) throw new Exception();
-		});
+		if (!result) throw new Exception();
 		return { data: { id: result.id } };
 	}
 
@@ -89,8 +84,8 @@ class UserService {
 	}
 
 	async signup() {
-		console.log(this);
 		const result = await this.save();
+		console.log(result);
 		const token = await generateToken({ id: result.data.id, type: result.data.type });
 		result.token = token;
 		if (!result) throw new Exception(httpStatus.CONFLICT, 'User already exist');

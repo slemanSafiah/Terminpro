@@ -65,7 +65,6 @@ module.exports = {
 	/** Sign up for user */
 	signup: async (req, res) => {
 		const data = req.body;
-		console.log(data);
 		const result = await new User(data).signup();
 		res.status(httpStatus.CREATED).json(result);
 	},
