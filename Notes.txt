@@ -1,3 +1,23 @@
+*****************************  general *****************************
 - prepare generate token
+- prepare verify token
+- implement sms
+- implement payment
+- remember offers
+*****************************  user *****************************
 - add validation for user
-- work on institution service
+- get by criteria
+*****************************  service *****************************
+- add validation for service
+- get by criteria
+*****************************  employee *****************************
+- add validation for employee
+- get by criteria
+*****************************  institution *****************************
+- add validation for institution
+- get by criteria
+*****************************  appointment *****************************
+- add validation for appointment
+- handle service time for appointment (if user ask for it)
+- get by criteria
+- add all function to this model

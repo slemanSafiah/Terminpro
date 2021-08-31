@@ -3,15 +3,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const categories = ['hairCut', 'bodyHelth'];
 const Address = require('../../../utils/schemaHelper/Address');
+const Rating = require('../../../utils/schemaHelper/Rate');
 
-const Rating = new Schema(
-	{
-		user: Schema.Types.ObjectId,
-		rate: Number,
-		ratedAt: { type: Date, default: Date.now() },
-	},
-	{ _id: false }
-);
+function arrayLimit(val) {
+	return val.length < 8;
+}
 
 const InstitutionSchema = new Schema(
 	{
@@ -27,7 +23,8 @@ const InstitutionSchema = new Schema(
 		photo: { type: Schema.Types.Buffer },
 		creditCard: { type: String },
 		openingDays: [String],
-		openingTimes: [String], //start with monday
+		openAt: { type: Number, required: true },
+		closeAt: { type: Number, required: true },
 	},
 	{
 		timestamps: true,

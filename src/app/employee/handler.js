@@ -26,6 +26,21 @@ module.exports = {
 		res.sendStatus(httpStatus.UPDATED);
 	},
 
+	/** Update a photo */
+	updatePhoto: async (req, res) => {
+		const { id } = req.params;
+		const data = req.body;
+		await Employee.updatePhoto(id, data);
+		res.sendStatus(httpStatus.UPDATED);
+	},
+
+	/** delete a photo */
+	deletePhoto: async (req, res) => {
+		const { id } = req.params;
+		await Employee.deletePhoto(id);
+		res.sendStatus(httpStatus.UPDATED);
+	},
+
 	/** Delete a Employee */
 	delete: async (req, res) => {
 		const { id } = req.params;
@@ -37,6 +52,20 @@ module.exports = {
 	getById: async (req, res) => {
 		const { id } = req.params;
 		const result = await Employee.getById(id);
+		res.status(httpStatus.OK).json(result);
+	},
+
+	/** Get time to work */
+	getAvailableTimes: async (req, res) => {
+		const { id } = req.params;
+		const result = await Employee.getAvailableTimes(id);
+		res.status(httpStatus.OK).json(result);
+	},
+
+	/** Login in for user */
+	login: async (req, res) => {
+		const data = req.body;
+		const result = await Employee.login(data);
 		res.status(httpStatus.OK).json(result);
 	},
 

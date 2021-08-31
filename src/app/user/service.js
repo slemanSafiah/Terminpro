@@ -18,7 +18,7 @@ class UserService {
 
 	async save() {
 		const user = await User.findOne({ email: this.email });
-		if (user) throw new Exception(httpStatus.CONFLICT, 'user Already exists');
+		if (user) throw new Exception(httpStatus.CONFLICT, 'User Already exists');
 
 		const result = await new User(this).save();
 
@@ -34,7 +34,7 @@ class UserService {
 
 	async update(id) {
 		const result = await User.findOneAndUpdate({ _id: id }, this, { omitUndefined: true });
-		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Item not found');
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
 		return;
 	}
 
