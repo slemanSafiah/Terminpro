@@ -33,6 +33,7 @@ class UserService {
 	}
 
 	async update(id) {
+		console.log(this);
 		const result = await User.findOneAndUpdate({ _id: id }, this, { omitUndefined: true });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
 		return;

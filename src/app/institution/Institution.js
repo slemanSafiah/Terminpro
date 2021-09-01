@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-const categories = ['hairCut', 'bodyHelth'];
+const categories = ['category1', 'category2'];
 const Address = require('../../../utils/schemaHelper/Address');
 const Rating = require('../../../utils/schemaHelper/Rate');
 

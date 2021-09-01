@@ -127,21 +127,6 @@ class EmployeeService {
 							return new Promise(async (resolve, reject) => {
 								let service = await Service.findOne({ _id: serv }, 'length'); //1.5
 
-								//let addMin = (service.length - Math.floor(service.length)) * 60; //30
-								//let addHour = Math.floor(service.length); //1
-								// let time = app.date.split(':'); //['12 ' , ' 30']
-
-								// let startHour = parseInt(time[0]) + addHour; //12+1 = 13
-								// let startMin = parseInt(time[1]) + addMin; //30+30 = 60
-								// console.log(startHour, startMin);
-
-								// if (startMin >= 60) {
-								// 	startHour += Math.floor(startMin / 60);
-								// 	startMin -= 60 * (startMin / 60);
-								// }
-
-								// let endTime =
-								// 	startHour.toString() + ' : ' + (startMin == 0 ? '00' : startMin.toString());
 								resolve({ startTime: app.date, length: service.length });
 							});
 						})

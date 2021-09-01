@@ -4,8 +4,9 @@
 - implement sms
 - implement payment
 - remember offers
+
+
 *****************************  user *****************************
-- add validation for user
 - get by criteria
 *****************************  service *****************************
 - add validation for service
@@ -14,10 +15,10 @@
 - add validation for employee
 - get by criteria
 *****************************  institution *****************************
-- add validation for institution
 - get by criteria
 *****************************  appointment *****************************
 - add validation for appointment
 - handle service time for appointment (if user ask for it)
 - get by criteria
 - add all function to this model
+- put length of the service instead of service_id

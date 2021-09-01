@@ -10,6 +10,7 @@ class InstitutionService {
 		this.name = data.name;
 		this.description = data.description;
 		this.category = data.category;
+		this.subCategory = data.subCategory;
 		this.address = data.address;
 		this.photo = data.photo;
 		this.creditCard = data.creditCard;
