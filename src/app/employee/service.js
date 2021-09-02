@@ -97,14 +97,9 @@ class EmployeeService {
 	}
 
 	static async getById(id) {
-		const result = await Employee.findById(id).lean();
-		const sum = result.rating.reduce((acc, cur) => {
-			return acc + cur.rate;
-		}, 0);
-		const data = { ...result };
-		data.rate = result.rating.length > 0 ? sum / result.rating.length : 0;
+		const result = await Employee.findOne({ _id: id }, '-password');
+		const data = result.toObject({ virtuals: true });
 		delete data.rating;
-		delete data.password;
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
 		return { data: data };
 	}

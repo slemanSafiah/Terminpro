@@ -31,11 +31,22 @@ class AppointmentService {
 		return { data: { id: result.id } };
 	}
 
-	async update(id) {}
+	static async delete(id) {
+		const result = await Appointment.findOneAndDelete({ _id: id });
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Appointment not found');
+		return { msg: 'done' };
+	}
 
-	static async delete(id) {}
+	static async getById(id) {
+		const result = await Appointment.findById(id)
+			.populate('institution', 'openingDays name description address rating')
+			.populate('employee', 'firstName lastName rating specialty')
+			.populate('service', 'name description length price');
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Appointment not found');
+		return { data: result };
+	}
 
-	static async getById(id) {}
+	static getByCriteria() {}
 }
 
 module.exports = AppointmentService;

@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const ServiceSchema = new Schema(
 	{
 		_id: { type: Schema.ObjectId, auto: true },
-		institution: { type: Schema.ObjectId, ref: 'Institutions' },
+		institution: { type: Schema.ObjectId, ref: 'Institution' },
 		name: { type: String, required: true },
 		category: { type: String, required: true },
 		description: { type: String, required: true },

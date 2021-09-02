@@ -1,24 +1,18 @@
 *****************************  general *****************************
-- prepare generate token
-- prepare verify token
 - implement sms
 - implement payment
 - remember offers
-
+- add subscribe
 
 *****************************  user *****************************
 - get by criteria
 *****************************  service *****************************
-- add validation for service
 - get by criteria
 *****************************  employee *****************************
-- add validation for employee
 - get by criteria
 *****************************  institution *****************************
 - get by criteria
 *****************************  appointment *****************************
-- add validation for appointment
 - handle service time for appointment (if user ask for it)
 - get by criteria
-- add all function to this model
 - put length of the service instead of service_id

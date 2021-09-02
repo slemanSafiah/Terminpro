@@ -1,27 +1,30 @@
 const handler = require('./handler');
 const router = require('express').Router();
 const Exception = require('../../../utils/errorHandlers/Exception');
+const validator = require('./validator');
+const { auth } = require('../../../utils/token/authMiddleware');
+
 /*********************************
  * @Router /api/private/template *
  *********************************/
 
-router.post('/', Exception.generalErrorHandler(handler.save));
+router.post('/', auth, validator.save, Exception.generalErrorHandler(handler.save));
 
-router.put('/:id', Exception.generalErrorHandler(handler.update));
+router.put('/:id', auth, validator.update, Exception.generalErrorHandler(handler.update));
 
-router.put('/:id/rate', Exception.generalErrorHandler(handler.rate));
+router.put('/:id/rate', auth, validator.rate, Exception.generalErrorHandler(handler.rate));
 
-router.put('/:id/photo', Exception.generalErrorHandler(handler.updatePhoto));
+router.put('/:id/photo', auth, validator.paramId, Exception.generalErrorHandler(handler.updatePhoto));
 
-router.delete('/:id', Exception.generalErrorHandler(handler.delete));
+router.delete('/:id', auth, validator.paramId, Exception.generalErrorHandler(handler.delete));
 
-router.delete('/:id/photo', Exception.generalErrorHandler(handler.deletePhoto));
+router.delete('/:id/photo', auth, validator.paramId, Exception.generalErrorHandler(handler.deletePhoto));
 
-router.get('/:id', Exception.generalErrorHandler(handler.getById));
+router.get('/:id', validator.paramId, Exception.generalErrorHandler(handler.getById));
 
-router.get('/:id/times', Exception.generalErrorHandler(handler.getAvailableTimes));
+router.get('/:id/times', validator.paramId, Exception.generalErrorHandler(handler.getAvailableTimes));
 
-router.post('/login', Exception.generalErrorHandler(handler.login));
+router.post('/login', validator.login, Exception.generalErrorHandler(handler.login));
 
 // router.get('/', handler.getByCriteria);
 

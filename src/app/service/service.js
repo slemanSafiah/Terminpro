@@ -36,7 +36,10 @@ class ServicesService {
 	}
 
 	static async getById(id) {
-		const result = await Service.findById(id);
+		const result = await Service.findById(id).populate(
+			'institution',
+			'openingDays name description address rating'
+		);
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Service not found');
 		return { data: result };
 	}

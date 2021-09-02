@@ -83,15 +83,11 @@ class InstitutionService {
 	}
 
 	static async getById(id) {
-		const result = await Institution.findById(id).lean();
-		const sum = result.rating.reduce((acc, cur) => {
-			return acc + cur.rate;
-		}, 0);
-		const data = { ...result };
-		data.rate = sum / result.rating.length;
+		const result = await Institution.findById(id);
+		const data = result.toObject({ virtuals: true });
 		delete data.rating;
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Item not found');
-		return { data };
+		return { data: data };
 	}
 
 	// static async getByCriteria(criteria = {}, { limit = 100, skip = 50, total = false }) {

@@ -19,7 +19,9 @@ const InstitutionSchema = new Schema(
 		category: { type: String, enum: categories, required: true },
 		subCategory: [String],
 		address: [Address],
-		rating: [Rating],
+		rating: {
+			type: [Rating],
+		},
 		photo: { type: Schema.Types.Buffer },
 		creditCard: { type: String },
 		openingDays: [String],
@@ -32,6 +34,14 @@ const InstitutionSchema = new Schema(
 		optimisticConcurrency: true,
 	}
 );
+
+InstitutionSchema.virtual('rate').get(function () {
+	if (!this.rating) return 0;
+	const sum = this.rating.reduce((acc, cur) => {
+		return acc + cur.rate;
+	}, 0);
+	return sum / this.rating.length;
+});
 
 const Institution = mongoose.model('Institution', InstitutionSchema, 'Institutions');
 
