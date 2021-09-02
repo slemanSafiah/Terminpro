@@ -56,8 +56,8 @@ module.exports = {
 
 	/** Get Users by criteria */
 	getByCriteria: async (req, res) => {
-		const criteria = _.pick(req.query, ['age']);
-		const pagination = _.pick(req.query, ['limit', 'offset', 'total']);
+		const criteria = _.pick(req.query, ['fn', 'ln', 'sort']);
+		const pagination = _.pick(req.query, ['limit', 'skip', 'total']);
 		const result = await User.getByCriteria(criteria, pagination);
 		res.status(httpStatus.OK).json(result);
 	},

@@ -41,10 +41,10 @@ module.exports = {
 	},
 
 	// /** Get Appointments by criteria */
-	// getByCriteria: async (req, res) => {
-	// 	const criteria = _.pick(req.query, ['age']);
-	// 	const pagination = _.pick(req.query, ['limit', 'offset', 'total']);
-	// 	const result = await Appointment.getByCriteria(criteria, pagination);
-	// 	res.status(httpStatus.OK).json(result);
-	// },
+	getByCriteria: async (req, res) => {
+		const criteria = _.pick(req.query, ['service', 'user', 'employee', 'institution', 'history', 'sort']);
+		const pagination = _.pick(req.query, ['limit', 'skip', 'total']);
+		const result = await Appointment.getByCriteria(criteria, pagination);
+		res.status(httpStatus.OK).json(result);
+	},
 };

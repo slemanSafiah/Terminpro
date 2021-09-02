@@ -90,11 +90,24 @@ class InstitutionService {
 		return { data: data };
 	}
 
-	// static async getByCriteria(criteria = {}, { limit = 100, skip = 50, total = false }) {
-	// 	const result = { data: await Institution.find(criteria, {}, { limit, skip }) };
-	// 	if (total) result.total = Institution.countDocuments(criteria);
-	// 	return result;
-	// }
+	static async getByCriteria(criteria, { limit, skip, total }) {
+		let condition = (() => {
+			let result = {};
+			if (criteria.name) result['name'] = { $regex: criteria.name, $options: 'i' };
+			if (criteria.cat) result['category'] = { $regex: criteria.cat, $options: 'i' };
+			if (criteria.subCat) result['subCategory'] = { $regex: criteria.subCat, $options: 'i' };
+			return result;
+		})();
+
+		const result = await Institution.find(condition, '-rating', { limit, skip })
+			.sort({ name: criteria.sort })
+			.lean();
+		let data = { data: result };
+		if (total) {
+			data.total = await Institution.countDocuments({});
+		}
+		return data;
+	}
 }
 
 module.exports = InstitutionService;

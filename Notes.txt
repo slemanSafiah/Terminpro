@@ -5,14 +5,11 @@
 - add subscribe
 
 *****************************  user *****************************
-- get by criteria
+
 *****************************  service *****************************
-- get by criteria
+
 *****************************  employee *****************************
-- get by criteria
+
 *****************************  institution *****************************
-- get by criteria
+
 *****************************  appointment *****************************
-- handle service time for appointment (if user ask for it)
-- get by criteria
-- put length of the service instead of service_id

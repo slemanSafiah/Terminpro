@@ -43,6 +43,21 @@ class ServicesService {
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Service not found');
 		return { data: result };
 	}
+
+	static async getByCriteria(criteria, { limit, skip, total }) {
+		let condition = (() => {
+			let result = {};
+			if (criteria.name) result['name'] = { $regex: criteria.name, $options: 'i' };
+			if (criteria.cat) result['category'] = { $regex: criteria.cat, $options: 'i' };
+			return result;
+		})();
+		const result = await Service.find(condition, '', { limit, skip }).sort({ name: criteria.sort }).lean();
+		let data = { data: result };
+		if (total) {
+			data.total = await Service.countDocuments({});
+		}
+		return data;
+	}
 }
 
 module.exports = ServicesService;

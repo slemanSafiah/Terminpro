@@ -52,10 +52,23 @@ const login = Joi.object({
 	},
 });
 
+const getByCriteria = Joi.object({
+	query: {
+		fn: Joi.string(),
+		ln: Joi.string(),
+		specialty: Joi.string(),
+		sort: Joi.number().default(1),
+		skip: Joi.number().integer().min(0).default(0),
+		limit: Joi.number().integer().min(1).max(50).default(10),
+		total: Joi.boolean().default(false),
+	},
+});
+
 module.exports = {
 	paramId: validate(paramId),
 	save: validate(save),
 	update: validate(update),
 	rate: validate(rate),
 	login: validate(login),
+	getByCriteria: validate(getByCriteria),
 };

@@ -8,10 +8,12 @@ const Employee = require('../employee/Employee');
 class AppointmentService {
 	constructor(data) {
 		this.date = data.date;
+		this.history = data.history;
 		this.service = data.service;
 		this.institution = data.institution;
 		this.user = data.user;
 		this.employee = data.employee;
+		this.end = data.end;
 	}
 
 	async save() {
@@ -23,6 +25,14 @@ class AppointmentService {
 
 		const employee = await Employee.findOne({ _id: this.employee });
 		if (!employee) throw new Exception(httpStatus.CONFLICT, 'Employee not found');
+		let appointment = await Appointment.findOne({
+			employee: this.employee,
+			history: this.history,
+			date: { $lte: this.end },
+			date: { $gte: this.date },
+		});
+		console.log(appointment);
+		if (appointment) throw new Exception(httpStatus.CONFLICT, "Appointment can't be reserved");
 
 		const result = await new Appointment(this).save();
 
@@ -46,7 +56,29 @@ class AppointmentService {
 		return { data: result };
 	}
 
-	static getByCriteria() {}
+	static async getByCriteria(criteria, { limit, skip, total }) {
+		let condition = (() => {
+			let result = {};
+			if (criteria.service) result['service'] = criteria.service;
+			if (criteria.institution) result['institution'] = criteria.institution;
+			if (criteria.user) result['user'] = criteria.user;
+			if (criteria.employee) result['employee'] = criteria.employee;
+			if (criteria.history) result['history'] = criteria.history;
+			return result;
+		})();
+		const result = await Appointment.find(condition, '', { limit, skip })
+			.populate('institution', 'openingDays name description address')
+			.populate('employee', 'firstName lastName specialty')
+			.populate('service', 'name description length price')
+			.sort({ history: criteria.sort })
+			.sort({ date: criteria.sort })
+			.lean();
+		let data = { data: result };
+		if (total) {
+			data.total = await Appointment.countDocuments({});
+		}
+		return data;
+	}
 }
 
 module.exports = AppointmentService;

@@ -22,7 +22,7 @@ router.delete('/:id', auth, validator.paramId, Exception.generalErrorHandler(han
 
 router.get('/:id', validator.paramId, Exception.generalErrorHandler(handler.getById));
 
-//router.get('/', Exception.generalErrorHandler(handler.getByCriteria));
+router.get('/', validator.getByCriteria, Exception.generalErrorHandler(handler.getByCriteria));
 
 router.post('/signup', validator.save, Exception.generalErrorHandler(handler.signup));
 

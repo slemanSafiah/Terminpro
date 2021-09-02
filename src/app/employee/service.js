@@ -159,6 +159,25 @@ class EmployeeService {
 		return times;
 	}
 
+	static async getByCriteria(criteria, { limit, skip, total }) {
+		let condition = (() => {
+			let result = {};
+			if (criteria.fn) result['firstName'] = { $regex: criteria.fn, $options: 'i' };
+			if (criteria.ln) result['lastName'] = { $regex: criteria.ln, $options: 'i' };
+			if (criteria.specialty) result['specialty'] = { $regex: criteria.specialty, $options: 'i' };
+			return result;
+		})();
+		const result = await Employee.find(condition, '-rating -password -email', { limit, skip })
+			.sort({ firstName: criteria.sort })
+			.sort({ lastName: criteria.sort })
+			.lean();
+		let data = { data: result };
+		if (total) {
+			data.total = await Employee.countDocuments({});
+		}
+		return data;
+	}
+
 	static async login(data) {
 		const result = await Employee.findOne({ email: data.email });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');

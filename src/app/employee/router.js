@@ -26,6 +26,6 @@ router.get('/:id/times', validator.paramId, Exception.generalErrorHandler(handle
 
 router.post('/login', validator.login, Exception.generalErrorHandler(handler.login));
 
-// router.get('/', handler.getByCriteria);
+router.get('/', validator.getByCriteria, handler.getByCriteria);
 
 module.exports = router;

@@ -70,10 +70,10 @@ module.exports = {
 	},
 
 	// /** Get Employees by criteria */
-	// getByCriteria: async (req, res) => {
-	// 	const criteria = _.pick(req.query, ['age']);
-	// 	const pagination = _.pick(req.query, ['limit', 'offset', 'total']);
-	// 	const result = await Employee.getByCriteria(criteria, pagination);
-	// 	res.status(httpStatus.OK).json(result);
-	// },
+	getByCriteria: async (req, res) => {
+		const criteria = _.pick(req.query, ['fn', 'ln', 'specialty', 'sort']);
+		const pagination = _.pick(req.query, ['limit', 'skip', 'total']);
+		const result = await Employee.getByCriteria(criteria, pagination);
+		res.status(httpStatus.OK).json(result);
+	},
 };

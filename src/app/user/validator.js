@@ -47,6 +47,17 @@ const update = Joi.object({
 	},
 });
 
+const getByCriteria = Joi.object({
+	query: {
+		ln: Joi.string(),
+		fn: Joi.string(),
+		sort: Joi.number().default(1),
+		skip: Joi.number().integer().min(0).default(0),
+		limit: Joi.number().integer().min(1).max(50).default(10),
+		total: Joi.boolean().default(false),
+	},
+});
+
 const login = Joi.object({
 	body: {
 		email: Joi.string().email().required(),
@@ -59,4 +70,5 @@ module.exports = {
 	save: validate(save),
 	update: validate(update),
 	login: validate(login),
+	getByCriteria: validate(getByCriteria),
 };

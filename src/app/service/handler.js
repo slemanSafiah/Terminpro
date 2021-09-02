@@ -34,8 +34,8 @@ module.exports = {
 
 	/** Get Services by criteria */
 	getByCriteria: async (req, res) => {
-		const criteria = _.pick(req.query, ['age']);
-		const pagination = _.pick(req.query, ['limit', 'offset', 'total']);
+		const criteria = _.pick(req.query, ['name', 'cat', 'sort']);
+		const pagination = _.pick(req.query, ['limit', 'skip', 'total']);
 		const result = await Service.getByCriteria(criteria, pagination);
 		res.status(httpStatus.OK).json(result);
 	},
