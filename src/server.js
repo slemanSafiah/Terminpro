@@ -11,7 +11,7 @@ const app = express();
 dotenv.config();
 
 // parse urlencoded request body
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse json request body
 app.use(bodyParser.json({ limit: '50mb' }));
