@@ -1,6 +1,5 @@
 const { verify } = require('./token');
 const { Exception, httpStatus } = require('../index');
-const mongoose = require('mongoose');
 
 exports.auth = async (req, res, next) => {
 	let token = null;
@@ -16,6 +15,6 @@ exports.auth = async (req, res, next) => {
 			next();
 		}
 	} catch (error) {
-		return res.status(httpStatus.UNAUTHORIZED).json({ msg: 'invalid token' });
+		return res.status(httpStatus.UNAUTHORIZED).json({ msg: 'error : invalid token' });
 	}
 };

@@ -9,5 +9,6 @@ router.use('/institution', require('./institution/router'));
 router.use('/service', require('./service/router'));
 router.use('/appointment', require('./appointment/router'));
 router.use('/employee', require('./employee/router'));
+router.use('/payment', require('./payment/router'));
 
 module.exports = router;
