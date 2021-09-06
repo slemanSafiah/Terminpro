@@ -16,10 +16,14 @@ router.put('/:id/rate', auth, validator.rate, Exception.generalErrorHandler(hand
 
 router.put('/:id/photo', auth, validator.paramId, Exception.generalErrorHandler(handler.update));
 
+router.put('/:id/slider', auth, validator.paramId, Exception.generalErrorHandler(handler.addToSlider));
+
+router.delete('/:id/slider', auth, validator.paramId, Exception.generalErrorHandler(handler.deleteFromSlider));
+
 router.delete('/:id', auth, validator.paramId, Exception.generalErrorHandler(handler.delete));
 
 router.get('/:id', validator.paramId, Exception.generalErrorHandler(handler.getById));
 
-router.get('/', validator.getByCriteria, handler.getByCriteria);
+router.get('/', validator.getByCriteria, Exception.generalErrorHandler(handler.getByCriteria));
 
 module.exports = router;

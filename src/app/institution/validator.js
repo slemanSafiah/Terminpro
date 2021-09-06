@@ -19,6 +19,7 @@ const save = Joi.object({
 		category: Joi.string()
 			.valid(...categories)
 			.required(),
+		subtitle: Joi.string().required(),
 		subCategory: Joi.array().items(Joi.string()).unique(),
 		phone: Joi.string().required(),
 		photo: Joi.string().base64(),
@@ -30,9 +31,7 @@ const save = Joi.object({
 			latitude: Joi.number(),
 		},
 		creditCard: Joi.string(),
-		openingDays: Joi.array()
-			.items(Joi.string().valid(...days))
-			.required(),
+		openingDays: Joi.array().required(),
 		openAt: Joi.number().max(24).min(0).required(),
 		closeAt: Joi.number().max(24).min(0).required(),
 	},
@@ -43,6 +42,7 @@ const update = Joi.object({
 		name: Joi.string().min(3).max(20).trim(),
 		description: Joi.string(),
 		category: Joi.string().valid(...categories),
+		subtitle: Joi.string(),
 		subCategory: Joi.array().items(Joi.string()).unique(),
 		phone: Joi.string(),
 		photo: Joi.string().base64(),
@@ -54,7 +54,7 @@ const update = Joi.object({
 			latitude: Joi.number(),
 		},
 		creditCard: Joi.string(),
-		openingDays: Joi.array().items(Joi.string().valid(...days)),
+		openingDays: Joi.array(),
 		openAt: Joi.number().max(24).min(0),
 		closeAt: Joi.number().max(24).min(0),
 	},

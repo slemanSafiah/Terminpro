@@ -8,6 +8,7 @@ class InstitutionService {
 		this.owner = data.owner;
 		this.email = data.email;
 		this.name = data.name;
+		this.subtitle = data.subtitle;
 		this.description = data.description;
 		this.category = data.category;
 		this.subCategory = data.subCategory;
@@ -17,6 +18,7 @@ class InstitutionService {
 		this.openingDays = data.openingDays;
 		this.openAt = data.openAt;
 		this.closeAt = data.closeAt;
+		this.slider = data.slider;
 	}
 
 	async save() {
@@ -72,6 +74,18 @@ class InstitutionService {
 
 	async update(id) {
 		const result = await Institution.findOneAndUpdate({ _id: id }, this, { omitUndefined: true });
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
+		return;
+	}
+
+	static async addToSlider(data) {
+		const result = await Institution.findOneAndUpdate({ _id: id }, { $push: { slider: data.image } });
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
+		return;
+	}
+
+	static async deleteFromSlider(id, data) {
+		const result = await Institution.findOneAndUpdate({ _id: id }, { $pull: { slider: { _id: data.id } } });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
 		return;
 	}

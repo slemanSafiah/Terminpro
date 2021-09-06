@@ -1,3 +1,6 @@
+const Institution = require('../../src/app/institution/Institution');
+const Service = require('../../src/app/service/Services');
+
 exports.prepareSubscription = async (data) => {
 	//TODO use axios to get subscription information
 	const subscription = {
@@ -40,10 +43,25 @@ exports.prepareSubscription = async (data) => {
 };
 
 exports.preparePayment = async (data) => {
-	//TODO get the email of the owner of institution
-	const email = 'sb-emkjy7504394@personal.example.com';
-	//TODO calculate the total amount
-	const amount = '100.00';
+	const inst_id = data.institution;
+	const inst_info = await Institution.findOne({ _id: inst_id }, 'creditCard');
+
+	const email = inst_info.creditCard ?? 'sb-emkjy7504394@personal.example.com';
+
+	const prices = await Promise.all(
+		data.services.map((ser) => {
+			return new Promise(async (resolve, reject) => {
+				let res = await Service.findOne({ _id: ser });
+				resolve(res.price);
+			});
+		})
+	);
+
+	const tmp = prices.reduce((acc, curr) => {
+		return acc + curr;
+	}, 0);
+
+	const amount = tmp ?? '100.00';
 
 	const res = {
 		actionType: 'PAY',

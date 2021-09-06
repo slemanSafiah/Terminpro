@@ -4,28 +4,45 @@
 - add weekend days to employee   (dashboard)
 - add cron job for subscription
 
+
 - add subscribe module
 - notification module
 
-- update fields depending on dashboard
 *****************************  user *****************************
-
+- change password
+- reset password
 *****************************  service *****************************
 
 *****************************  employee *****************************
 
 *****************************  institution *****************************
-
+- test institution slider
+- add to postman
 *****************************  appointment *****************************
 
 *****************************  payment *****************************
-    - add validation for functions
+- add validation for functions
+- test prepare payment functions
+- check postman
+*****************************  plans  *****************************
+
+*****************************  subscription  *****************************
+- test subscription functions
+- add validation
+- add to postman
 
 
 
 
 
 
+
+
+
+
+
+
+------------------------------------------------------------------------------------
 payment : 
     payment for subscribe (institution owner to Bilal)  type : subscription
     payment for the owner (client to institution owner)   type : checkout

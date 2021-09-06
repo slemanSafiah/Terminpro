@@ -17,12 +17,19 @@ const UserSchema = new Schema(
 			trim: true,
 			set: (val) => (val ? bcrypt.hashSync(val, 10) : undefined),
 		},
-		phone: { type: String, required: true, unique: true },
+		phone_1: { type: String, required: true, unique: true },
+		phone_2: { type: String, unique: true },
 		address: {
-			type: [Address],
+			type: Address,
 		},
 		photo: {
 			type: Schema.Types.Buffer,
+		},
+		urls: {
+			facebook: String,
+			instagram: String,
+			tiktok: String,
+			website: String,
 		},
 		verified: {
 			type: Boolean,

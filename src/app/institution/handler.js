@@ -26,11 +26,20 @@ module.exports = {
 		res.sendStatus(httpStatus.UPDATED);
 	},
 
-	/** Delete a Institution */
-	delete: async (req, res) => {
+	/** Add image to a slider */
+	addToSlider: async (req, res) => {
 		const { id } = req.params;
-		const result = await Institution.delete(id);
-		res.status(httpStatus.OK).json(result);
+		const data = req.body;
+		await Institution.addToSlider(id, data);
+		res.status(httpStatus.UPDATED);
+	},
+
+	/** Delete image from slider */
+	deleteFromSlider: async (req, res) => {
+		const { id } = req.params;
+		const data = req.body;
+		await Institution.deleteFromSlider(id, data);
+		res.status(httpStatus.UPDATED);
 	},
 
 	/** Get Institution by id */

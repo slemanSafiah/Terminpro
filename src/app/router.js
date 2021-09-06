@@ -10,5 +10,5 @@ router.use('/service', require('./service/router'));
 router.use('/appointment', require('./appointment/router'));
 router.use('/employee', require('./employee/router'));
 router.use('/payment', require('./payment/router'));
-
+router.use('/plan', require('./plan/router'));
 module.exports = router;

@@ -11,9 +11,11 @@ class UserService {
 		this.firstName = data.firstName;
 		this.lastName = data.lastName;
 		this.password = data.password;
-		this.phone = data.phone;
+		this.phone1 = data.phone1;
+		this.phone2 = data.phone2;
 		this.photo = data.photo;
 		this.address = data.address;
+		this.urls = data.urls;
 	}
 
 	async save() {
@@ -71,7 +73,7 @@ class UserService {
 			return result;
 		})();
 
-		let projection = ['_id', 'firstName', 'lastName', 'phone', 'address', 'photo'];
+		let projection = ['_id', 'firstName', 'lastName', 'phone1', 'phone2', 'address', 'photo'];
 
 		const result = await User.find(condition, projection, { limit, skip })
 			.sort({ firstName: criteria.sort })
@@ -96,7 +98,8 @@ class UserService {
 				email: result.email,
 				firstName: result.firstName,
 				lastName: result.lastName,
-				phone: result.phone,
+				phone1: result.phone1,
+				phone2: result.phone2,
 				photo: result.photo,
 				address: result.address,
 			};

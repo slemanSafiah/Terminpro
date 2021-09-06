@@ -48,17 +48,6 @@ const PaymentSchema = new Schema(
 	}
 );
 
-PaymentSchema.methods.nextStatus = function (status = undefined) {
-	const statuses = ['Pending', 'Done'];
-	const currentStatus = status || this.status;
-	const currentIndex = statuses.findIndex((val) => val === currentStatus);
-
-	if (!currentIndex) throw new Error('Status Not Found');
-	if (currentIndex === statuses.length - 1) throw new Error('No More Status Left');
-
-	return statuses[currentIndex + 1];
-};
-
 const Payment = mongoose.model('Payment', PaymentSchema, 'Payments');
 
 module.exports = Payment;

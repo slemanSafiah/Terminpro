@@ -6,7 +6,7 @@ const Address = require('../../../utils/schemaHelper/Address');
 const Rating = require('../../../utils/schemaHelper/Rate');
 
 function arrayLimit(val) {
-	return val.length < 8;
+	return val.length <= 10;
 }
 
 const InstitutionSchema = new Schema(
@@ -15,6 +15,7 @@ const InstitutionSchema = new Schema(
 		owner: { type: Schema.ObjectId, required: true },
 		email: { type: String, required: true },
 		name: { type: String, required: true },
+		subtitle: { type: String, required: true },
 		description: { type: String, required: true },
 		category: { type: String, enum: categories, required: true },
 		subCategory: [String],
@@ -23,6 +24,10 @@ const InstitutionSchema = new Schema(
 			type: [Rating],
 		},
 		photo: { type: Schema.Types.Buffer },
+		slider: {
+			type: [Schema.Types.Buffer],
+			validate: [arrayLimit, 'exceeds the limit of 10 image'],
+		},
 		creditCard: { type: String },
 		openingDays: [String],
 		openAt: { type: Number, required: true },
