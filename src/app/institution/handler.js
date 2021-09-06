@@ -34,12 +34,19 @@ module.exports = {
 		res.status(httpStatus.UPDATED);
 	},
 
+	/** delete institution */
+	delete: async (req, res) => {
+		const { id } = req.params;
+		await Institution.delete(id);
+		res.sendStatus(httpStatus.OK);
+	},
+
 	/** Delete image from slider */
 	deleteFromSlider: async (req, res) => {
 		const { id } = req.params;
 		const data = req.body;
 		await Institution.deleteFromSlider(id, data);
-		res.status(httpStatus.UPDATED);
+		res.sendStatus(httpStatus.UPDATED);
 	},
 
 	/** Get Institution by id */

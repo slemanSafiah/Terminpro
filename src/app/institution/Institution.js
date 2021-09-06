@@ -28,7 +28,7 @@ const InstitutionSchema = new Schema(
 			type: [Schema.Types.Buffer],
 			validate: [arrayLimit, 'exceeds the limit of 10 image'],
 		},
-		paypalEmail: { type: String },
+		paypalEmail: { type: String, default: '' },
 		openingDays: [String],
 		openAt: { type: Number, required: true },
 		closeAt: { type: Number, required: true },

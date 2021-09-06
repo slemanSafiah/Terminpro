@@ -14,11 +14,11 @@ const save = Joi.object({
 		owner: Joi.objectId().required(),
 		email: Joi.string().email().required(),
 		name: Joi.string().min(3).max(20).trim().required(),
+		subtitle: Joi.string().required(),
 		description: Joi.string().required(),
 		category: Joi.string()
 			.valid(...categories)
 			.required(),
-		subtitle: Joi.string().required(),
 		subCategory: Joi.array().items(Joi.string()).unique(),
 		phone: Joi.string().required(),
 		photo: Joi.string().base64(),
@@ -29,7 +29,8 @@ const save = Joi.object({
 			longitude: Joi.number(),
 			latitude: Joi.number(),
 		},
-		creditCard: Joi.string(),
+		slider: Joi.array(),
+		paypalEmail: Joi.string(),
 		openingDays: Joi.array().required(),
 		openAt: Joi.number().max(24).min(0).required(),
 		closeAt: Joi.number().max(24).min(0).required(),
@@ -40,6 +41,7 @@ const update = Joi.object({
 	body: {
 		name: Joi.string().min(3).max(20).trim(),
 		description: Joi.string(),
+		subtitle: Joi.string(),
 		category: Joi.string().valid(...categories),
 		subtitle: Joi.string(),
 		subCategory: Joi.array().items(Joi.string()).unique(),
@@ -52,10 +54,11 @@ const update = Joi.object({
 			longitude: Joi.number(),
 			latitude: Joi.number(),
 		},
-		creditCard: Joi.string(),
+		paypalEmail: Joi.string(),
 		openingDays: Joi.array(),
 		openAt: Joi.number().max(24).min(0),
 		closeAt: Joi.number().max(24).min(0),
+		subscription: Joi.objectId(),
 	},
 	params: {
 		id: Joi.objectId(),

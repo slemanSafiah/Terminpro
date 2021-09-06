@@ -14,7 +14,7 @@ class InstitutionService {
 		this.subCategory = data.subCategory;
 		this.address = data.address;
 		this.photo = data.photo;
-		this.paypalEmail = data.creditCard;
+		this.paypalEmail = data.paypalEmail;
 		this.openingDays = data.openingDays;
 		this.openAt = data.openAt;
 		this.closeAt = data.closeAt;
@@ -27,8 +27,7 @@ class InstitutionService {
 		const session = await mongoose.startSession();
 		await session.withTransaction(async (session) => {
 			const institution = await Institution.findOne({ email: this.email }).session(session);
-
-			if (institution) if (user) throw new Exception(httpStatus.CONFLICT, 'user Already exists');
+			if (institution) throw new Exception(httpStatus.CONFLICT, 'Institution Already exists');
 
 			result = await new Institution(this).save({ session });
 			if (!result) throw new Exception();
@@ -97,7 +96,7 @@ class InstitutionService {
 
 	static async delete(id) {
 		const result = await Institution.findOneAndDelete({ _id: id });
-		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Item not found');
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
 		return;
 	}
 

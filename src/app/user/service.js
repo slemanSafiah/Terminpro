@@ -11,8 +11,8 @@ class UserService {
 		this.firstName = data.firstName;
 		this.lastName = data.lastName;
 		this.password = data.password;
-		this.phone1 = data.phone1;
-		this.phone2 = data.phone2;
+		this.phone_1 = data.phone_1;
+		this.phone_2 = data.phone_2;
 		this.photo = data.photo;
 		this.address = data.address;
 		this.urls = data.urls;
@@ -35,7 +35,6 @@ class UserService {
 	}
 
 	async update(id) {
-		console.log(this);
 		const result = await User.findOneAndUpdate({ _id: id }, this, { omitUndefined: true });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
 		return;

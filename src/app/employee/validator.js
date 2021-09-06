@@ -25,7 +25,6 @@ const update = Joi.object({
 		institution: Joi.objectId(),
 		firstName: Joi.string().min(3).trim(),
 		lastName: Joi.string().min(3).trim(),
-		email: Joi.string().email(),
 		specialty: Joi.string(),
 		password: Joi.string(),
 		photo: Joi.string().base64(),
