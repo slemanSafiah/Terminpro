@@ -14,11 +14,12 @@ class InstitutionService {
 		this.subCategory = data.subCategory;
 		this.address = data.address;
 		this.photo = data.photo;
-		this.creditCard = data.creditCard;
+		this.paypalEmail = data.creditCard;
 		this.openingDays = data.openingDays;
 		this.openAt = data.openAt;
 		this.closeAt = data.closeAt;
 		this.slider = data.slider;
+		this.subscription = data.subscription;
 	}
 
 	async save() {
@@ -76,6 +77,10 @@ class InstitutionService {
 		const result = await Institution.findOneAndUpdate({ _id: id }, this, { omitUndefined: true });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
 		return;
+	}
+
+	async subscribe(id, data) {
+		//TODO update subscribe property
 	}
 
 	static async addToSlider(data) {

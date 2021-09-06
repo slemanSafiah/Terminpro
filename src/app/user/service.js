@@ -42,9 +42,23 @@ class UserService {
 	}
 
 	static async verify(id) {
+		const user = await User.findOne({ _id: id });
+		if (!user) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
 		const result = await User.updateOne({ _id: id }, { verified: true });
-		if (!result.nModified) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
+		if (!result.nModified) throw new Exception(httpStatus.INTERNAL_SERVER_ERROR, 'error');
 		return;
+	}
+
+	static async changePassword(id, data) {
+		const user = await User.findOne({ _id: id });
+		if (!user) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
+		const result = await User.updateOne({ _id: id }, { password: data.password });
+		if (!result.nModified) throw new Exception(httpStatus.INTERNAL_SERVER_ERROR, 'error');
+		return;
+	}
+
+	static async resetPassword() {
+		//TODO wait for message api
 	}
 
 	static async deletePhoto(id) {

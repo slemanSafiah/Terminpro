@@ -33,6 +33,22 @@ module.exports = {
 		res.sendStatus(httpStatus.UPDATED);
 	},
 
+	/** change Password */
+	changePassword: async (req, res) => {
+		const { id } = req.params;
+		const data = req.body;
+		await User.changePassword(id, data);
+		res.sendStatus(httpStatus.UPDATED);
+	},
+
+	/** Reset Password */
+	resetPassword: async (req, res) => {
+		const { id } = req.params;
+		const data = req.body;
+		await User.resetPassword(id, data);
+		res.sendStatus(httpStatus.UPDATED);
+	},
+
 	/** delete a photo */
 	deletePhoto: async (req, res) => {
 		const { id } = req.params;

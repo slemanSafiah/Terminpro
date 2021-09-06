@@ -21,7 +21,7 @@ module.exports = {
 	switchStatus: async (req, res) => {
 		const { id } = req.params;
 		const result = await Plan.switchStatus(id);
-		return result;
+		res.sendStatus(httpStatus.UPDATED);
 	},
 
 	/** Delete a Plan */
@@ -34,7 +34,7 @@ module.exports = {
 	/** Get Plan by id */
 	getPlan: async (req, res) => {
 		const { id } = req.params;
-		const result = await Plan.getById(id);
+		const result = await Plan.getPlan(id);
 		res.status(httpStatus.OK).json(result);
 	},
 

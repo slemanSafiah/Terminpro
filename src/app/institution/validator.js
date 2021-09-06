@@ -2,7 +2,6 @@ const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const { validate } = require('../../../utils/validator');
 const categories = ['category1', 'category2'];
-const days = ['saturday , sunday , monday ,tuesday', 'wednesday', 'thursday', 'friday'];
 
 const paramId = Joi.object({
 	params: {

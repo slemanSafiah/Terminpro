@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { httpStatus } = require('../../../utils');
 const { auth } = require('../../../utils/token/authMiddleware');
+const validator = require('./validator');
 const paypal = require('paypal-rest-sdk');
 const paymentObject = require('../../../utils/helper/preparePayment');
 const Payment = require('./Payment');
@@ -55,7 +56,7 @@ router.get('/cancel', auth, (req, res) => {
  * @params id for the owner of institution
  * @body - institutionID and SKU
  */
-router.post('/subscription/:id', auth, async (req, res) => {
+router.post('/subscription/:id', auth, validator.checkout, validator.paramId, async (req, res) => {
 	const data = await paymentObject.prepareSubscription(req.body);
 	paypal;
 	paypal.payment.create(data.pay, async function (err, payment) {
@@ -85,8 +86,8 @@ router.post('/subscription/:id', auth, async (req, res) => {
  * @params id for the user
  * @body  -institution and array of services
  */
-router.post('/pay/:id', auth, async (req, res) => {
-	const data = paymentObject.preparePayment(req.body);
+router.post('/pay/:id', auth, validator.adaptivePayment, validator.paramId, async (req, res) => {
+	const data = await paymentObject.preparePayment(req.body);
 	const result = await axios({
 		method: 'POST',
 		url: 'https://svcs.sandbox.paypal.com/AdaptivePayments/Pay',
@@ -100,8 +101,7 @@ router.post('/pay/:id', auth, async (req, res) => {
 		},
 		data: data,
 	});
-	console.log(result.data);
-	if (result.data.responseEnvelop.ack === 'Success')
+	if (result.data.responseEnvelope.ack === 'Success')
 		return res.status(httpStatus.OK).json({
 			red_url: `https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-payment&paykey=${result.data.payKey}`,
 		});

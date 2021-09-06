@@ -1,12 +1,10 @@
 const Institution = require('../../src/app/institution/Institution');
 const Service = require('../../src/app/service/Services');
+const Plan = require('../../src/app/plan/Plan');
 
 exports.prepareSubscription = async (data) => {
-	//TODO use axios to get subscription information
-	const subscription = {
-		price: '25.00',
-		description: 'you are use the first version',
-	};
+	const plan = await Plan.findOne({ _id: data.id });
+
 	const paymentObject = {
 		pay: {
 			intent: 'sale',
@@ -22,9 +20,9 @@ exports.prepareSubscription = async (data) => {
 					item_list: {
 						items: [
 							{
-								name: 'subscription',
-								sku: data.sku,
-								price: subscription.price,
+								name: plan.name,
+								sku: plan.sku,
+								price: plan.price,
 								currency: 'USD',
 								quantity: 1,
 							},
@@ -32,9 +30,9 @@ exports.prepareSubscription = async (data) => {
 					},
 					amount: {
 						currency: 'USD',
-						total: subscription.price,
+						total: plan.price,
 					},
-					description: subscription.description,
+					description: plan.description,
 				},
 			],
 		},
@@ -44,9 +42,9 @@ exports.prepareSubscription = async (data) => {
 
 exports.preparePayment = async (data) => {
 	const inst_id = data.institution;
-	const inst_info = await Institution.findOne({ _id: inst_id }, 'creditCard');
+	const inst_info = await Institution.findOne({ _id: inst_id }, 'paypalEmail');
 
-	const email = inst_info.creditCard ?? 'sb-emkjy7504394@personal.example.com';
+	const email = inst_info.paypalEmail;
 
 	const prices = await Promise.all(
 		data.services.map((ser) => {
@@ -61,8 +59,8 @@ exports.preparePayment = async (data) => {
 		return acc + curr;
 	}, 0);
 
-	const amount = tmp ?? '100.00';
-
+	const amount = tmp + '.00';
+	console.log(email, amount);
 	const res = {
 		actionType: 'PAY',
 		currencyCode: 'USD',
@@ -81,6 +79,5 @@ exports.preparePayment = async (data) => {
 			detailLevel: 'ReturnAll',
 		},
 	};
-
 	return res;
 };

@@ -9,21 +9,17 @@
 - notification module
 
 *****************************  user *****************************
-- change password
 - reset password
 *****************************  service *****************************
 
 *****************************  employee *****************************
 
 *****************************  institution *****************************
-- test institution slider
-- add to postman
+- add validation for days
 *****************************  appointment *****************************
 
 *****************************  payment *****************************
-- add validation for functions
-- test prepare payment functions
-- check postman
+
 *****************************  plans  *****************************
 
 *****************************  subscription  *****************************
