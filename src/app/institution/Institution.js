@@ -32,7 +32,11 @@ const InstitutionSchema = new Schema(
 		openingDays: [String],
 		openAt: { type: Number, required: true },
 		closeAt: { type: Number, required: true },
-		subscription: { type: Schema.Types.ObjectId, ref: 'Plan' },
+		subscription: {
+			plan: { type: Schema.Types.ObjectId, ref: 'Plan', default: null },
+			start: { type: Date },
+		},
+		notified: { type: Boolean, default: false },
 	},
 	{
 		timestamps: true,

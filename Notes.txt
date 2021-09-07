@@ -1,33 +1,23 @@
 *****************************  general *****************************
-- implement sms
+- implement sms (notification , verification , resetPassword)
 - remember offers
 - add weekend days to employee   (dashboard)
-- add cron job for subscription
-
-
-- add subscribe module
-- notification module
-
 *****************************  user *****************************
-- reset password
+- reset password (sms , email)
 *****************************  service *****************************
 
 *****************************  employee *****************************
 
 *****************************  institution *****************************
 - add validation for days
+- what happens if the institution deleted (if possible)
 *****************************  appointment *****************************
 
 *****************************  payment *****************************
 
 *****************************  plans  *****************************
-
-*****************************  subscription  *****************************
-- test subscription functions
-- add validation
-- add to postman
-
-
+- what happens if the subscription end
+- what happens to ended appointment
 
 
 

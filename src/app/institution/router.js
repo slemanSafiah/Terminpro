@@ -12,6 +12,10 @@ router.post('/', auth, validator.save, Exception.generalErrorHandler(handler.sav
 
 router.put('/:id', auth, validator.update, Exception.generalErrorHandler(handler.update));
 
+router.put('/:id/subscribe', auth, validator.paramId, Exception.generalErrorHandler(handler.subscribe));
+
+router.put('/:id/unsubscribe', auth, validator.paramId, Exception.generalErrorHandler(handler.unsubscribe));
+
 router.put('/:id/rate', auth, validator.rate, Exception.generalErrorHandler(handler.rate));
 
 router.put('/:id/photo', auth, validator.paramId, Exception.generalErrorHandler(handler.update));

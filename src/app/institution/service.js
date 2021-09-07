@@ -2,6 +2,7 @@ const { Exception, httpStatus } = require('../../../utils');
 const mongoose = require('mongoose');
 const Institution = require('./Institution');
 const User = require('../user/User');
+const Plan = require('../plan/Plan');
 
 class InstitutionService {
 	constructor(data) {
@@ -81,8 +82,39 @@ class InstitutionService {
 		return;
 	}
 
-	async subscribe(id, data) {
-		//TODO update subscribe property
+	static async subscribe(id, data) {
+		const institution = await Institution.findOne({ _id: id });
+		if (!institution) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
+
+		const plan = await Plan.findOne({ _id: mongoose.Types.ObjectId(data.id) });
+		if (!plan) throw new Exception(httpStatus.NOT_FOUND, 'plan not found');
+		if (plan.available === false) throw new Exception(httpStatus.CONFLICT, 'Plan are not available');
+
+		const result = await Institution.updateOne(
+			{ _id: id },
+			{
+				$set: {
+					subscription: {
+						plan: data.id,
+						start: Date.now(),
+					},
+					notified: false,
+				},
+			}
+		);
+		if (!result.nModified) throw new Exception(httpStatus.INTERNAL_SERVER_ERROR, 'Error in modification');
+
+		return;
+	}
+
+	static async unsubscribe(id) {
+		const institution = await Institution.findOne({ _id: id });
+		if (!institution) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
+
+		const result = await Institution.updateOne({ _id: id }, { $set: { subscription: null } });
+		if (!result.nModified) throw new Exception(httpStatus.INTERNAL_SERVER_ERROR, 'Error in modification');
+
+		return;
 	}
 
 	static async addToSlider(data) {
@@ -112,7 +144,7 @@ class InstitutionService {
 	}
 
 	static async getById(id) {
-		const result = await Institution.findById(id);
+		const result = await Institution.findById(id).populate('subscription');
 		const data = result.toObject({ virtuals: true });
 		delete data.rating;
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Item not found');

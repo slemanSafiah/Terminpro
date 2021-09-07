@@ -26,11 +26,26 @@ module.exports = {
 		res.sendStatus(httpStatus.UPDATED);
 	},
 
+	/** add subscription to Institution */
+	subscribe: async (req, res) => {
+		const { id } = req.params;
+		const data = req.body;
+		await Institution.subscribe(id, data);
+		res.sendStatus(httpStatus.UPDATED);
+	},
+
+	/** delete subscription from Institution */
+	unsubscribe: async (req, res) => {
+		const { id } = req.params;
+		const data = req.body;
+		await Institution.unsubscribe(id, data);
+		res.sendStatus(httpStatus.UPDATED);
+	},
+
 	/** Add image to a slider */
 	addToSlider: async (req, res) => {
 		const { id } = req.params;
-		const data = req.body;
-		await Institution.addToSlider(id, data);
+		await Institution.addToSlider(id);
 		res.status(httpStatus.UPDATED);
 	},
 

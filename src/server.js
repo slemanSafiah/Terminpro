@@ -3,9 +3,13 @@ const express = require('express');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cron = require('node-cron');
 const cors = require('cors');
+const checkSubscription = require('../utils/helper/subscription');
 
 const app = express();
+
+cron.schedule('*/10 * * * * *', checkSubscription);
 
 // initial dotenv
 dotenv.config();

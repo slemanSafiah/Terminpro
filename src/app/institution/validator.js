@@ -1,6 +1,7 @@
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const { validate } = require('../../../utils/validator');
+const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 const categories = ['category1', 'category2'];
 
 const paramId = Joi.object({
@@ -31,7 +32,9 @@ const save = Joi.object({
 		},
 		slider: Joi.array(),
 		paypalEmail: Joi.string(),
-		openingDays: Joi.array().required(),
+		openingDays: Joi.array()
+			.items(Joi.string().valid(...days))
+			.required(),
 		openAt: Joi.number().max(24).min(0).required(),
 		closeAt: Joi.number().max(24).min(0).required(),
 	},
@@ -55,10 +58,13 @@ const update = Joi.object({
 			latitude: Joi.number(),
 		},
 		paypalEmail: Joi.string(),
-		openingDays: Joi.array(),
+		openingDays: Joi.array().items(Joi.string().valid(...days)),
 		openAt: Joi.number().max(24).min(0),
 		closeAt: Joi.number().max(24).min(0),
-		subscription: Joi.objectId(),
+		subscription: {
+			plan: Joi.objectId(),
+			start: Joi.date(),
+		},
 	},
 	params: {
 		id: Joi.objectId(),

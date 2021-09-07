@@ -10,7 +10,9 @@ const paramId = Joi.object({
 
 const save = Joi.object({
 	body: {
+		name: Joi.string().required(),
 		sku: Joi.string().required(),
+		description: Joi.string().required(),
 		price: Joi.string().required(),
 		employeeLimit: Joi.number().min(1).required(),
 		serviceLimit: Joi.number().min(1).required(),
@@ -21,7 +23,9 @@ const save = Joi.object({
 
 const update = Joi.object({
 	body: {
+		name: Joi.string(),
 		sku: Joi.string(),
+		description: Joi.string(),
 		price: Joi.string(),
 		employeeLimit: Joi.number().min(1),
 		serviceLimit: Joi.number().min(1),
