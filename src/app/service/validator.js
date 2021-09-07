@@ -26,23 +26,14 @@ const save = Joi.object({
 
 const update = Joi.object({
 	body: {
-		name: Joi.string().min(3).max(20).trim(),
+		name: Joi.string().min(3).trim(),
 		description: Joi.string(),
-		category: Joi.string().valid(...categories),
-		subCategory: Joi.array().items(Joi.string()).unique(),
-		phone: Joi.string(),
-		photo: Joi.string().base64(),
-		address: {
-			country: Joi.string(),
-			city: Joi.string(),
-			location: Joi.string(),
-			longitude: Joi.number(),
-			latitude: Joi.number(),
-		},
-		creditCard: Joi.string(),
-		openingDays: Joi.array().items(Joi.string().valid(...days)),
-		openAt: Joi.number().max(24).min(0),
-		closeAt: Joi.number().max(24).min(0),
+		category: Joi.string(),
+		length: Joi.number(),
+		price: Joi.number(),
+		atLeast: Joi.bool(),
+		retainer: Joi.number(),
+		hasRetainer: Joi.bool(),
 	},
 	params: {
 		id: Joi.objectId(),

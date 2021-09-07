@@ -73,7 +73,10 @@ class InstitutionService {
 	}
 
 	async update(id) {
-		const result = await Institution.findOneAndUpdate({ _id: id }, this, { omitUndefined: true });
+		const result = await Institution.findOneAndUpdate({ _id: id }, this, {
+			omitUndefined: true,
+			useFindAndModify: false,
+		});
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
 		return;
 	}
@@ -83,19 +86,27 @@ class InstitutionService {
 	}
 
 	static async addToSlider(data) {
-		const result = await Institution.findOneAndUpdate({ _id: id }, { $push: { slider: data.image } });
+		const result = await Institution.findOneAndUpdate(
+			{ _id: id },
+			{ $push: { slider: data.image } },
+			{ useFindAndModify: false }
+		);
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
 		return;
 	}
 
 	static async deleteFromSlider(id, data) {
-		const result = await Institution.findOneAndUpdate({ _id: id }, { $pull: { slider: { _id: data.id } } });
+		const result = await Institution.findOneAndUpdate(
+			{ _id: id },
+			{ $pull: { slider: { _id: data.id } } },
+			{ useFindAndModify: false }
+		);
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
 		return;
 	}
 
 	static async delete(id) {
-		const result = await Institution.findOneAndDelete({ _id: id });
+		const result = await Institution.findOneAndDelete({ _id: id }, { useFindAndModify: false });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
 		return;
 	}

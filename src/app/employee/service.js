@@ -85,13 +85,13 @@ class EmployeeService {
 	}
 
 	static async delete(id) {
-		const result = await Employee.findOneAndDelete({ _id: id });
+		const result = await Employee.findOneAndDelete({ _id: id }, { useFindAndModify: false });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
 		return { msg: 'done' };
 	}
 
 	static async deletePhoto(id) {
-		const result = await Employee.findOneAndUpdate({ _id: id }, { photo: null });
+		const result = await Employee.findOneAndUpdate({ _id: id }, { photo: null }, { useFindAndModify: false });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
 		return;
 	}
