@@ -8,15 +8,16 @@ class CategoryService {
 	}
 
 	async save() {
+		if (this.image) this.image = Buffer.from(this.image, 'base64');
 		const result = await new Category(this).save();
 		if (!result) throw new Exception();
-
 		return { data: { id: result._id } };
 	}
 
 	async update(id) {
 		const category = await Category.findOne({ _id: id });
 		if (!category) throw new Exception(httpStatus.CONFLICT, 'Category not found');
+		if (this.image) this.image = Buffer.from(this.image, 'base64');
 
 		const result = await Category.updateOne({ _id: id }, this, {
 			omitUndefined: true,

@@ -29,6 +29,8 @@ class EmployeeService {
 
 		if (!inst) throw new Exception(httpStatus.CONFLICT, 'Institution not found');
 
+		if (this.photo) this.photo = Buffer.from(this.photo, 'base64');
+
 		const result = await new Employee(this).save();
 
 		if (!result) throw new Exception();
@@ -37,13 +39,16 @@ class EmployeeService {
 	}
 
 	async update(id) {
+		if (this.photo) this.photo = Buffer.from(this.photo, 'base64');
+
 		const result = await Employee.updateOne({ _id: id }, this, { omitUndefined: true });
 		return;
 	}
 
 	static async updatePhoto(id, data) {
-		const result = await Employee.updateOne({ _id: id }, data);
+		if (data.photo) data.photo = Buffer.from(data.photo, 'base64');
 
+		const result = await Employee.updateOne({ _id: id }, data);
 		return;
 	}
 

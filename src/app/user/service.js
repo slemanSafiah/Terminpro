@@ -21,7 +21,7 @@ class UserService {
 	async save() {
 		const user = await User.findOne({ email: this.email });
 		if (user) throw new Exception(httpStatus.CONFLICT, 'User Already exists');
-
+		if (this.photo) this.photo = Buffer.from(this.photo, 'base64');
 		const result = await new User(this).save();
 
 		if (!result) throw new Exception();
@@ -29,12 +29,15 @@ class UserService {
 	}
 
 	static async updatePhoto(id, data) {
+		if (data.photo) data.photo = Buffer.from(data.photo, 'base64');
+
 		const result = await User.updateOne({ _id: id }, data);
 
 		return;
 	}
 
 	async update(id) {
+		if (this.photo) this.photo = Buffer.from(this.photo, 'base64');
 		const result = await User.findOneAndUpdate({ _id: id }, this, { omitUndefined: true });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
 		return;

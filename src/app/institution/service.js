@@ -94,6 +94,11 @@ class InstitutionService {
 	}
 
 	async update(id) {
+		if (this.photo) this.photo = Buffer.from(this.photo, 'base64');
+			if (this.slider)
+				this.slider = this.slider.map((ele) => {
+					return Buffer.from(ele, 'base64');
+				});
 		const result = await Institution.findOneAndUpdate({ _id: id }, this, {
 			omitUndefined: true,
 			useFindAndModify: false,
@@ -138,6 +143,7 @@ class InstitutionService {
 	}
 
 	static async addToSlider(data) {
+		if (data.image) data.image = Buffer.from(data.image, 'base64');
 		const result = await Institution.findOneAndUpdate(
 			{ _id: id },
 			{ $push: { slider: data.image } },
