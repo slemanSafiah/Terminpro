@@ -44,6 +44,12 @@ class InstitutionService {
 				throw new Exception(httpStatus.CONFLICT, 'Category not found');
 			}
 
+			if (this.photo) this.photo = Buffer.from(this.photo, 'base64');
+			if (this.slider)
+				this.slider = this.slider.map((ele) => {
+					return Buffer.from(ele, 'base64');
+				});
+
 			result = await new Institution(this).save({ session });
 			if (!result) throw new Exception();
 		});
