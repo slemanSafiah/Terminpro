@@ -2,23 +2,23 @@
 - implement sms (notification , verification , resetPassword)
 - remember offers
 - add weekend days to employee   (dashboard)
+
 *****************************  user *****************************
-- reset password (sms , email)
+- reset password using sms
 *****************************  service *****************************
 
 *****************************  employee *****************************
 
 *****************************  institution *****************************
-- add validation for days
-- what happens if the institution deleted (if possible)
-*****************************  appointment *****************************
 
+*****************************  appointment *****************************
+- make archive to the appointment every year
 *****************************  payment *****************************
 
 *****************************  plans  *****************************
-- what happens if the subscription end
-- what happens to ended appointment
-
+- after subscription end the account freeze
+- after 3 month the account blocked
+*****************************  category  *****************************
 
 
 

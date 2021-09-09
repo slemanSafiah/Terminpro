@@ -2,7 +2,6 @@ const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const { validate } = require('../../../utils/validator');
 const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-const categories = ['category1', 'category2'];
 
 const paramId = Joi.object({
 	params: {
@@ -17,9 +16,7 @@ const save = Joi.object({
 		name: Joi.string().min(3).max(20).trim().required(),
 		subtitle: Joi.string().required(),
 		description: Joi.string().required(),
-		category: Joi.string()
-			.valid(...categories)
-			.required(),
+		category: Joi.string().required(),
 		subCategory: Joi.array().items(Joi.string()).unique(),
 		phone: Joi.string().required(),
 		photo: Joi.string().base64(),
@@ -45,7 +42,7 @@ const update = Joi.object({
 		name: Joi.string().min(3).max(20).trim(),
 		description: Joi.string(),
 		subtitle: Joi.string(),
-		category: Joi.string().valid(...categories),
+		category: Joi.string(),
 		subtitle: Joi.string(),
 		subCategory: Joi.array().items(Joi.string()).unique(),
 		phone: Joi.string(),

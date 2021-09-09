@@ -71,6 +71,13 @@ module.exports = {
 		res.status(httpStatus.OK).json(result);
 	},
 
+	/** Get Institutions by plan */
+	getByPlan: async (req, res) => {
+		const { id } = req.params;
+		const result = await Institution.getByPlan(id);
+		res.status(httpStatus.OK).json(result);
+	},
+
 	// /** Get Institutions by criteria */
 	getByCriteria: async (req, res) => {
 		const criteria = _.pick(req.query, ['name', 'cat', 'subCat', 'sort']);

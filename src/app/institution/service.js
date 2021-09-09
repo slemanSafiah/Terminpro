@@ -1,5 +1,6 @@
 const { Exception, httpStatus } = require('../../../utils');
 const mongoose = require('mongoose');
+const Category = require('../admin/category/Category');
 const Institution = require('./Institution');
 const User = require('../user/User');
 const Plan = require('../plan/Plan');
@@ -29,6 +30,19 @@ class InstitutionService {
 		await session.withTransaction(async (session) => {
 			const institution = await Institution.findOne({ email: this.email }).session(session);
 			if (institution) throw new Exception(httpStatus.CONFLICT, 'Institution Already exists');
+
+			let categories = await Category.find({});
+			categories = categories.map((ele) => {
+				return ele.name;
+			});
+
+			if (
+				categories.findIndex((ele) => {
+					return ele === this.category;
+				}) === -1
+			) {
+				throw new Exception(httpStatus.CONFLICT, 'Category not found');
+			}
 
 			result = await new Institution(this).save({ session });
 			if (!result) throw new Exception();
@@ -147,8 +161,14 @@ class InstitutionService {
 		const result = await Institution.findById(id).populate('subscription');
 		const data = result.toObject({ virtuals: true });
 		delete data.rating;
-		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Item not found');
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'institution not found');
 		return { data: data };
+	}
+
+	static async getByPlan(id) {
+		const result = await Institution.find({ 'subscription.plan': id });
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'institutions not found');
+		return { data: result };
 	}
 
 	static async getByCriteria(criteria, { limit, skip, total }) {
@@ -160,7 +180,7 @@ class InstitutionService {
 			return result;
 		})();
 
-		const result = await Institution.find(condition, '-rating', { limit, skip })
+		const result = await Institution.find(condition, '-rating -slider', { limit, skip })
 			.sort({ name: criteria.sort })
 			.lean();
 		let data = { data: result };
