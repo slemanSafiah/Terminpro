@@ -67,7 +67,6 @@ class UserService {
 		const user = await User.findOne({ email: email });
 		if (!user) return { msg: 'an email sent' };
 		const token = await resetToken({ _id: user._id });
-		console.log(token);
 		await User.updateOne({ resetToken: token });
 
 		//TODO ADD SESSION
