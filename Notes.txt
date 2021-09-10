@@ -1,10 +1,9 @@
 *****************************  general *****************************
-- implement sms (notification , verification , resetPassword)
 - remember offers
 - add weekend days to employee   (dashboard)
 
 *****************************  user *****************************
-- reset password using sms
+- add verifyCode property to the user model
 *****************************  service *****************************
 
 *****************************  employee *****************************
@@ -16,8 +15,7 @@
 *****************************  payment *****************************
 
 *****************************  plans  *****************************
-- after subscription end the account freeze
-- after 3 month the account blocked
+
 *****************************  category  *****************************
 
 

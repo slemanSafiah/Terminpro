@@ -20,4 +20,22 @@ exports.verify = async (token) => {
 	}
 };
 
+exports.resetToken = async (payload) => {
+	try {
+		let token = await jwt.sign(payload, secret, { expiresIn: '1h' });
+		return token;
+	} catch (ex) {
+		console.log(ex);
+		return false;
+	}
+};
+
+exports.verifyResetToken = async (token) => {
+	try {
+		let decode = await jwt.verify(token, secret);
+		return decode;
+	} catch (ex) {
+		return false;
+	}
+};
 //we will use symmetric key until next step we generate public/private key

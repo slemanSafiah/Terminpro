@@ -41,12 +41,18 @@ module.exports = {
 		res.sendStatus(httpStatus.UPDATED);
 	},
 
+	forgetPasswordEmail: async (req, res) => {
+		const data = req.body.email;
+		const result = await User.forgetPasswordEmail(data);
+		res.status(httpStatus.OK).json(result);
+	},
+
 	/** Reset Password */
 	resetPassword: async (req, res) => {
-		const { id } = req.params;
-		const data = req.body;
-		await User.resetPassword(id, data);
-		res.sendStatus(httpStatus.UPDATED);
+		const { token } = req.params;
+		const password = req.body.password;
+		const result = await User.resetPassword(token, password);
+		res.status(httpStatus.UPDATED).json(result);
 	},
 
 	/** delete a photo */

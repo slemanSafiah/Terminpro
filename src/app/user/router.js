@@ -7,14 +7,15 @@ const { auth } = require('../../../utils/token/authMiddleware');
 /*********************************
  * @Router /api/private/template *
  *********************************/
+router.put('/forgetPassword', Exception.generalErrorHandler(handler.forgetPasswordEmail));
+
+router.put('/resetPassword/:token', Exception.generalErrorHandler(handler.resetPassword));
 
 router.post('/', auth, validator.save, Exception.generalErrorHandler(handler.save));
 
 router.put('/:id', auth, validator.update, Exception.generalErrorHandler(handler.update));
 
 router.put('/:id/changePassword', auth, validator.paramId, Exception.generalErrorHandler(handler.changePassword));
-
-router.put('/:id/resetPassword', auth, validator.paramId, Exception.generalErrorHandler(handler.resetPassword));
 
 router.put('/:id/photo', auth, validator.paramId, Exception.generalErrorHandler(handler.updatePhoto));
 

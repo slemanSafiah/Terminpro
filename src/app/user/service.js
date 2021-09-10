@@ -1,8 +1,9 @@
 const { Exception, httpStatus } = require('../../../utils');
-const { generateToken } = require('../../../utils/token/token');
+const { generateToken, resetToken, verifyResetToken } = require('../../../utils/token/token');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./User');
+const sendEmail = require('../../../utils/helper/email');
 
 class UserService {
 	constructor(data) {
@@ -44,6 +45,7 @@ class UserService {
 	}
 
 	static async verify(id) {
+		//TODO check the sms code sent to the user in sign up
 		const user = await User.findOne({ _id: id });
 		if (!user) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
 		const result = await User.updateOne({ _id: id }, { verified: true });
@@ -59,8 +61,30 @@ class UserService {
 		return;
 	}
 
-	static async resetPassword() {
-		//TODO wait for message api
+	static async forgetPasswordEmail(email) {
+		// add random number to the db
+		const user = await User.findOne({ email: email });
+		if (!user) return { msg: 'an email sent' };
+		const token = await resetToken({ _id: user._id });
+		console.log(token);
+		await User.updateOne({ resetToken: token });
+
+		//TODO ADD SESSION
+		const res = await sendEmail(token, email);
+		return;
+	}
+
+	static async resetPassword(token, password) {
+		const user = await User.findOne({ resetToken: token });
+		if (!user) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
+
+		let decode = await verifyResetToken(token);
+		if (!decode) throw new Exception(httpStatus.CONFLICT, 'token is not valid');
+
+		const result = await User.updateOne({ _id: decode._id }, { $set: { password: password, resetToken: '' } });
+		if (!result.nModified) throw new Exception(httpStatus.INTERNAL_SERVER_ERROR, 'error in update password');
+
+		return;
 	}
 
 	static async deletePhoto(id) {
@@ -130,6 +154,7 @@ class UserService {
 		const token = await generateToken({ id: result.data.id, type: result.data.type });
 		result.token = token;
 		if (!result) throw new Exception(httpStatus.CONFLICT, 'User already exist');
+		//TODO send sms with verify code
 		return result;
 	}
 }

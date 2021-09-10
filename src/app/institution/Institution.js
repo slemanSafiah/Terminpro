@@ -37,6 +37,8 @@ const InstitutionSchema = new Schema(
 			start: { type: Date },
 		},
 		notified: { type: Boolean, default: false },
+		freezed: { type: Boolean, default: false },
+		blocked: { type: Boolean, default: false },
 	},
 	{
 		timestamps: true,
