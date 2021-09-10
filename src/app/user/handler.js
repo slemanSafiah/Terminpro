@@ -21,7 +21,8 @@ module.exports = {
 	/** Verify User */
 	verify: async (req, res) => {
 		const { id } = req.params;
-		await User.verify(id);
+		const code = req.body.code;
+		await User.verify(id, code);
 		res.sendStatus(httpStatus.UPDATED);
 	},
 

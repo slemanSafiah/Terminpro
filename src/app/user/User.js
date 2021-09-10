@@ -39,6 +39,10 @@ const UserSchema = new Schema(
 			type: String,
 			default: '',
 		},
+		verifyCode: {
+			type: String,
+			default: '',
+		},
 	},
 	{
 		timestamps: true,

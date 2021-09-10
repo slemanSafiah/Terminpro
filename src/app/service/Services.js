@@ -12,7 +12,7 @@ const ServiceSchema = new Schema(
 		length: { type: Number, required: true },
 		price: { type: Number, required: true },
 		atLeast: { type: Boolean },
-		retainer: { type: Number },
+		retainer: { type: Number, default: 0 },
 		hasRetainer: { type: Boolean },
 	},
 	{

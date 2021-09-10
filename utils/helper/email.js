@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const template = require('./template');
 
 module.exports = async (token, email) => {
-	const link = `http://lcoalhost:8080/resetpass?${token}`;
+	const link = `http://lcoalhost:8080/resetpass?token=${token}`;
 	const html = template(link);
 
 	const transporter = nodemailer.createTransport({

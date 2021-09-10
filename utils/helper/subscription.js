@@ -23,14 +23,20 @@ module.exports = async () => {
 							{ $set: { subscription: null, freezed: false, blocked: true } }
 						);
 						//TODO send sms
+						const message =
+							'you account is blocked right now , subscribe our plans to retrieve the services';
 					} else {
 						await Institution.updateOne({ _id: ele._id }, { $set: { subscription: null, freezed: true } });
 						//TODO send sms and update notify
+						const message =
+							'your subscription end today, your account has been notified as freezed, subscribe our plans to retrieve the services';
 					}
 				} else if (endSubscription <= todayPlusWeek && !ele.notified) {
-					//subscription gonna end in  ten days
+					//subscription gonna end in  week
 					await Institution.updateOne({ _id: ele._id }, { $set: { notified: true } });
 					//TODO send sms and update notify
+					const message =
+						'your subscription will end in a week, subscribe our plans to continue with our services';
 				}
 			});
 		})

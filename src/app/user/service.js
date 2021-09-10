@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./User');
 const sendEmail = require('../../../utils/helper/email');
+const generateCode = require('../../../utils/helper/generateCode');
 
 class UserService {
 	constructor(data) {
@@ -45,10 +46,10 @@ class UserService {
 		return;
 	}
 
-	static async verify(id) {
-		//TODO check the sms code sent to the user in sign up
+	static async verify(id, code) {
 		const user = await User.findOne({ _id: id });
 		if (!user) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
+		if (user.verifyCode !== code) throw new Exception(httpStatus.CONFLICT, 'wrong verification code');
 		const result = await User.updateOne({ _id: id }, { verified: true });
 		if (!result.nModified) throw new Exception(httpStatus.INTERNAL_SERVER_ERROR, 'error');
 		return;
@@ -64,17 +65,11 @@ class UserService {
 
 	static async forgetPasswordEmail(email) {
 		// add random number to the db
-		try {
-			const user = await User.findOne({ email: email });
-			if (!user) return { msg: 'an email sent' };
-			const token = await resetToken({ _id: user._id });
-			await User.updateOne({ resetToken: token });
-
-			//TODO ADD SESSION
-			const res = await sendEmail(token, email);
-		} catch (err) {
-			return err;
-		}
+		const user = await User.findOne({ email: email });
+		if (!user) return { msg: 'an email sent' };
+		const token = await resetToken({ _id: user._id });
+		await User.updateOne({ resetToken: token });
+		await sendEmail(token, email);
 		return;
 	}
 
@@ -157,7 +152,12 @@ class UserService {
 		const token = await generateToken({ id: result.data.id, type: result.data.type });
 		result.token = token;
 		if (!result) throw new Exception(httpStatus.CONFLICT, 'User already exist');
+
+		const code = generateCode();
+		await User.updateOne({ _id: result.data.id }, { $set: { verifyCode: code } });
 		//TODO send sms with verify code
+		const message = `your verification code is ${code}, verify your account to get the best with us`;
+
 		return result;
 	}
 }

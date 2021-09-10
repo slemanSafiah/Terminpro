@@ -50,8 +50,7 @@ exports.preparePayment = async (data) => {
 		data.services.map((ser) => {
 			return new Promise(async (resolve, reject) => {
 				let res = await Service.findOne({ _id: ser });
-				//TODO put retainer and check if some services hold it and other not
-				resolve(res.price);
+				resolve(res.retainer);
 			});
 		})
 	);
