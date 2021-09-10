@@ -64,13 +64,17 @@ class UserService {
 
 	static async forgetPasswordEmail(email) {
 		// add random number to the db
-		const user = await User.findOne({ email: email });
-		if (!user) return { msg: 'an email sent' };
-		const token = await resetToken({ _id: user._id });
-		await User.updateOne({ resetToken: token });
+		try {
+			const user = await User.findOne({ email: email });
+			if (!user) return { msg: 'an email sent' };
+			const token = await resetToken({ _id: user._id });
+			await User.updateOne({ resetToken: token });
 
-		//TODO ADD SESSION
-		const res = await sendEmail(token, email);
+			//TODO ADD SESSION
+			const res = await sendEmail(token, email);
+		} catch (err) {
+			return err;
+		}
 		return;
 	}
 
