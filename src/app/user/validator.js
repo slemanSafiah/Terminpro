@@ -15,7 +15,6 @@ const save = Joi.object({
 		firstName: Joi.string().min(3).max(20).trim().required(),
 		lastName: Joi.string().min(3).max(20).trim().required(),
 		password: Joi.string().required(),
-		phone: Joi.string().required(),
 		photo: Joi.string().base64(),
 		address: {
 			country: Joi.string(),
@@ -39,7 +38,6 @@ const update = Joi.object({
 		firstName: Joi.string(),
 		lastName: Joi.string(),
 		password: Joi.string(),
-		phone: Joi.string(),
 		photo: Joi.string().base64(),
 		address: {
 			country: Joi.string(),

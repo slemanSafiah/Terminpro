@@ -12,10 +12,10 @@ class UserService {
 		this.firstName = data.firstName;
 		this.lastName = data.lastName;
 		this.password = data.password;
+		this.address = data.address;
 		this.phone_1 = data.phone_1;
 		this.phone_2 = data.phone_2;
 		this.photo = data.photo;
-		this.address = data.address;
 		this.urls = data.urls;
 	}
 
@@ -23,10 +23,11 @@ class UserService {
 		const user = await User.findOne({ email: this.email });
 		if (user) throw new Exception(httpStatus.CONFLICT, 'User Already exists');
 		if (this.photo) this.photo = Buffer.from(this.photo, 'base64');
+
 		const result = await new User(this).save();
 
 		if (!result) throw new Exception();
-		return { data: { id: result.id } };
+		return { data: { id: result._id } };
 	}
 
 	static async updatePhoto(id, data) {
@@ -150,7 +151,6 @@ class UserService {
 
 	async signup() {
 		const result = await this.save();
-		console.log(result);
 		const token = await generateToken({ id: result.data.id, type: result.data.type });
 		result.token = token;
 		if (!result) throw new Exception(httpStatus.CONFLICT, 'User already exist');
