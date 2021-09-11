@@ -32,6 +32,13 @@ module.exports = {
 		res.status(httpStatus.OK).json(result);
 	},
 
+	/** Get institution's services */
+	getServices: async (req, res) => {
+		const { id } = req.params;
+		const result = await Service.getServices(id);
+		res.status(httpStatus.OK).json(result);
+	},
+
 	/** Get Services by criteria */
 	getByCriteria: async (req, res) => {
 		const criteria = _.pick(req.query, ['name', 'cat', 'sort']);

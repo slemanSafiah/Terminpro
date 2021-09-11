@@ -69,7 +69,14 @@ module.exports = {
 		res.status(httpStatus.OK).json(result);
 	},
 
-	// /** Get Employees by criteria */
+	/** Get Employees of an institution */
+	getEmployees: async (req, res) => {
+		const { id } = req.params;
+		const result = await Employee.getEmployees(id);
+		res.status(httpStatus.OK).json(result);
+	},
+
+	/** Get Employees by criteria */
 	getByCriteria: async (req, res) => {
 		const criteria = _.pick(req.query, ['fn', 'ln', 'specialty', 'sort']);
 		const pagination = _.pick(req.query, ['limit', 'skip', 'total']);

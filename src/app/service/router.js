@@ -16,6 +16,8 @@ router.delete('/:id', auth, validator.paramId, Exception.generalErrorHandler(han
 
 router.get('/:id', validator.paramId, Exception.generalErrorHandler(handler.getById));
 
-router.get('/', validator.getByCriteria, handler.getByCriteria);
+router.get('/:id/all', validator.paramId, Exception.generalErrorHandler(handler.getServices));
+
+router.get('/', validator.getByCriteria, Exception.generalErrorHandler(handler.getByCriteria));
 
 module.exports = router;

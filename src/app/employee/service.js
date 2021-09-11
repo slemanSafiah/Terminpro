@@ -164,6 +164,16 @@ class EmployeeService {
 		return times;
 	}
 
+	static async getEmployees(id) {
+		const result = await Employee.find({ institution: id }, '-password');
+		const data = result.map((emp) => {
+			let employee = emp.toObject({ virtuals: true });
+			delete employee.rating;
+			return employee;
+		});
+		return { data: data };
+	}
+
 	static async getByCriteria(criteria, { limit, skip, total }) {
 		let condition = (() => {
 			let result = {};

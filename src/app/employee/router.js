@@ -24,6 +24,8 @@ router.get('/:id', validator.paramId, Exception.generalErrorHandler(handler.getB
 
 router.get('/:id/times', validator.paramId, Exception.generalErrorHandler(handler.getAvailableTimes));
 
+router.get('/:id/all', validator.paramId, Exception.generalErrorHandler(handler.getEmployees));
+
 router.post('/login', validator.login, Exception.generalErrorHandler(handler.login));
 
 router.get('/', validator.getByCriteria, handler.getByCriteria);

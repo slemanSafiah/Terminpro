@@ -44,6 +44,12 @@ class ServicesService {
 		return { data: result };
 	}
 
+	static async getServices(id) {
+		const result = await Service.find({ institution: id });
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Service not found');
+		return { data: result };
+	}
+
 	static async getByCriteria(criteria, { limit, skip, total }) {
 		let condition = (() => {
 			let result = {};
