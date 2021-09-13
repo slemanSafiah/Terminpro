@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 module.exports = async (token, email) => {
-	const link = `http://lcoalhost:8080/resetpass?token=${token}`;
+	const link = `http://localhost:8080/resetpass?token=${token}`;
 
 	const data = {
 		service_id: process.env.SERVICEID,
