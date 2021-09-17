@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-const categories = ['category1', 'category2'];
 const Address = require('../../../utils/schemaHelper/Address');
 const Rating = require('../../../utils/schemaHelper/Rate');
 
@@ -17,7 +16,7 @@ const InstitutionSchema = new Schema(
 		name: { type: String, required: true },
 		subtitle: { type: String, required: true },
 		description: { type: String, required: true },
-		category: { type: String, enum: categories, required: true },
+		category: { type: String,required: true },
 		subCategory: [String],
 		address: [Address],
 		rating: {
