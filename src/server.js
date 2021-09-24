@@ -6,10 +6,12 @@ const mongoose = require('mongoose');
 const cron = require('node-cron');
 const cors = require('cors');
 const checkSubscription = require('../utils/helper/subscription');
+const checkAppointment = require('../utils/helper/appointment');
 
 const app = express();
 
-cron.schedule('*/10 * * * * *', checkSubscription);
+//cron.schedule('*/10 * * * * *', checkSubscription);
+//cron.schedule('*/5 * * * * *', checkAppointment);
 
 // initial dotenv
 dotenv.config();

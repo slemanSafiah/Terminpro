@@ -3,8 +3,11 @@ const { generateToken, resetToken, verifyResetToken } = require('../../../utils/
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./User');
+const path = require('path');
+const fs = require('fs').promises;
 const sendEmail = require('../../../utils/helper/email');
 const generateCode = require('../../../utils/helper/generateCode');
+const paths = require('../../../paths');
 
 class UserService {
 	constructor(data) {
@@ -23,8 +26,12 @@ class UserService {
 	async save() {
 		const user = await User.findOne({ email: this.email });
 		if (user) throw new Exception(httpStatus.CONFLICT, 'User Already exists');
-		if (this.photo) this.photo = Buffer.from(this.photo, 'base64');
-
+		if (this.photo) {
+			let image = Buffer.from(this.photo, 'base64');
+			let fileName = Date.now().toString() + '.jpg';
+			this.photo = `/uploads/user/${fileName}`;
+			await fs.writeFile(`./uploads/user/${fileName}`, image);
+		}
 		const result = await new User(this).save();
 
 		if (!result) throw new Exception();
@@ -32,10 +39,25 @@ class UserService {
 	}
 
 	static async updatePhoto(id, data) {
-		if (data.photo) data.photo = Buffer.from(data.photo, 'base64');
-
-		const result = await User.updateOne({ _id: id }, data);
-
+		const session = await mongoose.startSession();
+		await session.withTransaction(async (session) => {
+			if (data.photo) {
+				let image = Buffer.from(data.photo, 'base64');
+				let fileName = Date.now().toString() + '.jpg';
+				let photo = `/uploads/user/${fileName}`;
+				await fs.writeFile(`./uploads/user/${fileName}`, image);
+				const result = await User.findOneAndUpdate(
+					{ _id: id },
+					{ photo: photo },
+					{
+						omitUndefined: true,
+						new: false,
+						session: session,
+					}
+				);
+				if (result.photo) await fs.unlink(`${paths.app}/${result.photo}`);
+			}
+		});
 		return;
 	}
 
@@ -88,6 +110,7 @@ class UserService {
 
 	static async deletePhoto(id) {
 		const result = await User.findOneAndUpdate({ _id: id }, { photo: null });
+		await fs.unlink(`${paths.app}/${result.photo}`);
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
 		return;
 	}
@@ -99,9 +122,14 @@ class UserService {
 	}
 
 	static async getById(id) {
-		const result = await User.findById(id, '-password');
-		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
-		return { data: result };
+		try {
+			const result = await User.findById(id, '-password');
+			if (result.photo) result.photo = await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
+			if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
+			return { data: result };
+		} catch (err) {
+			console.log(err);
+		}
 	}
 
 	static async getByCriteria(criteria, { limit, skip, total }) {
@@ -118,7 +146,17 @@ class UserService {
 			.sort({ firstName: criteria.sort })
 			.sort({ lastName: criteria.sort })
 			.lean();
-		let data = { data: result };
+
+		let resultWithImage = await Promise.all(
+			result.map((user) => {
+				return new Promise(async (resolve, reject) => {
+					if (user.photo) user.photo = await fs.readFile(`${paths.app}/${user.photo}`, 'base64');
+					resolve(user);
+				});
+			})
+		);
+
+		let data = { data: resultWithImage };
 		if (total) {
 			data.total = await User.countDocuments({});
 		}
@@ -142,6 +180,9 @@ class UserService {
 				photo: result.photo,
 				address: result.address,
 			};
+
+			if (data.photo) data.photo = await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
+
 			return { data, token };
 		}
 		throw new Exception(httpStatus.NOT_FOUND, 'wrong password');

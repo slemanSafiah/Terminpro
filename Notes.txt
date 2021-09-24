@@ -2,11 +2,17 @@
 - remember offers
 - add weekend days to employee   (dashboard)
 
+- add lean() to some functions
+
 *****************************     user        *****************************
 
 *****************************     service     *****************************
 
+- add logic to be compitable with the plan
+
 *****************************     employee    *****************************
+
+- add logic to be compitable with the plan
 
 *****************************     institution *****************************
 
@@ -19,7 +25,7 @@
 *****************************     plans       *****************************
 
 *****************************     category    *****************************
-
+- check image upload
 
 
 

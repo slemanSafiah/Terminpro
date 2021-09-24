@@ -23,7 +23,7 @@ const UserSchema = new Schema(
 			type: Address,
 		},
 		photo: {
-			type: Schema.Types.Buffer,
+			type: String,
 		},
 		urls: {
 			facebook: String,
