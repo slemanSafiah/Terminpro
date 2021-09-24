@@ -4,6 +4,15 @@ const Category = require('../admin/category/Category');
 const Institution = require('./Institution');
 const User = require('../user/User');
 const Plan = require('../plan/Plan');
+const paths = require('../../../paths');
+const fs = require('fs').promises;
+
+async function uploadImage(photo) {
+	let image = Buffer.from(photo, 'base64');
+	let fileName = Date.now().toString() + '.jpg';
+	await fs.writeFile(`./uploads/institution/${fileName}`, image);
+	return `/uploads/institution/${fileName}`;
+}
 
 class InstitutionService {
 	constructor(data) {
@@ -44,11 +53,18 @@ class InstitutionService {
 				throw new Exception(httpStatus.CONFLICT, 'Category not found');
 			}
 
-			if (this.photo) this.photo = Buffer.from(this.photo, 'base64');
+			if (this.photo) {
+				this.photo = await uploadImage(this.photo);
+			}
 			if (this.slider)
-				this.slider = this.slider.map((ele) => {
-					return Buffer.from(ele, 'base64');
-				});
+				this.slider = await Promise.all(
+					this.slider.map((ele) => {
+						return new Promise(async (resolve, reject) => {
+							let image = await uploadImage(ele);
+							resolve(image);
+						});
+					})
+				);
 
 			result = await new Institution(this).save({ session });
 			if (!result) throw new Exception();
@@ -94,11 +110,6 @@ class InstitutionService {
 	}
 
 	async update(id) {
-		if (this.photo) this.photo = Buffer.from(this.photo, 'base64');
-		if (this.slider)
-			this.slider = this.slider.map((ele) => {
-				return Buffer.from(ele, 'base64');
-			});
 		const result = await Institution.findOneAndUpdate({ _id: id }, this, {
 			omitUndefined: true,
 			useFindAndModify: false,
@@ -107,30 +118,52 @@ class InstitutionService {
 		return;
 	}
 
+	static async updatePhoto(id, data) {
+		if (data.photo) {
+			const photo = await uploadImage(data.photo);
+			const result = await Institution.findOneAndUpdate(
+				{ _id: id },
+				{ photo: photo },
+				{
+					omitUndefined: true,
+					new: false,
+					useFindAndModify: false,
+				}
+			);
+			if (result.photo) await fs.unlink(`${paths.app}/${result.photo}`);
+		}
+		return;
+	}
+
 	static async subscribe(id, data) {
-		const institution = await Institution.findOne({ _id: id });
-		if (!institution) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
+		try {
+			const institution = await Institution.findOne({ _id: id });
+			console.log(institution);
+			if (!institution) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
 
-		const plan = await Plan.findOne({ _id: mongoose.Types.ObjectId(data.id) });
-		if (!plan) throw new Exception(httpStatus.NOT_FOUND, 'plan not found');
-		if (plan.available === false) throw new Exception(httpStatus.CONFLICT, 'Plan are not available');
+			const plan = await Plan.findOne({ _id: mongoose.Types.ObjectId(data.id) });
+			console.log(plan);
+			if (!plan) throw new Exception(httpStatus.NOT_FOUND, 'plan not found');
+			if (plan.available === false) throw new Exception(httpStatus.CONFLICT, 'Plan are not available');
 
-		const result = await Institution.updateOne(
-			{ _id: id },
-			{
-				$set: {
-					subscription: {
-						plan: data.id,
-						start: Date.now(),
+			const result = await Institution.updateOne(
+				{ _id: id },
+				{
+					$set: {
+						subscription: {
+							plan: data.id,
+							start: Date.now(),
+						},
+						notified: false,
+						blocked: false,
+						freezed: false,
 					},
-					notified: false,
-					blocked: false,
-					freezed: false,
-				},
-			}
-		);
-		if (!result.nModified) throw new Exception(httpStatus.INTERNAL_SERVER_ERROR, 'Error in modification');
-
+				}
+			);
+			if (!result.nModified) throw new Exception(httpStatus.INTERNAL_SERVER_ERROR, 'Error in modification');
+		} catch (err) {
+			console.log(err);
+		}
 		return;
 	}
 
@@ -144,8 +177,8 @@ class InstitutionService {
 		return;
 	}
 
-	static async addToSlider(data) {
-		if (data.image) data.image = Buffer.from(data.image, 'base64');
+	static async addToSlider(id, data) {
+		if (data.image) data.image = await uploadImage(data.image);
 		const result = await Institution.findOneAndUpdate(
 			{ _id: id },
 			{ $push: { slider: data.image } },
@@ -155,13 +188,21 @@ class InstitutionService {
 		return;
 	}
 
+	static async deletePhoto(id) {
+		const result = await Institution.findOneAndUpdate({ _id: id }, { photo: null });
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
+		await fs.unlink(`${paths.app}/${result.photo}`);
+		return;
+	}
+
 	static async deleteFromSlider(id, data) {
 		const result = await Institution.findOneAndUpdate(
 			{ _id: id },
-			{ $pull: { slider: { _id: data.id } } },
+			{ $pull: { slider: `/uploads/institution/${data.fileName}` } },
 			{ useFindAndModify: false }
 		);
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Institution not found');
+		await fs.unlink(`${paths.app}/uploads/institution/${data.fileName}`);
 		return;
 	}
 
@@ -173,9 +214,20 @@ class InstitutionService {
 
 	static async getById(id) {
 		const result = await Institution.findById(id).populate('subscription');
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'institution not found');
 		const data = result.toObject({ virtuals: true });
 		delete data.rating;
-		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'institution not found');
+		if (isNaN(data.rating)) data.rate = 0;
+		if (data.photo) data.photo = await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
+		data.slider = await Promise.all(
+			data.slider.map((img) => {
+				return new Promise(async (resolve, reject) => {
+					const fileName = img.split('/');
+					if (img) img = await fs.readFile(`${paths.app}/${img}`, 'base64');
+					resolve({ image: img, fileName: fileName[fileName.length - 1] });
+				});
+			})
+		);
 		return { data: data };
 	}
 
@@ -197,7 +249,17 @@ class InstitutionService {
 		const result = await Institution.find(condition, '-rating -slider', { limit, skip })
 			.sort({ name: criteria.sort })
 			.lean();
-		let data = { data: result };
+
+		let resultWithImage = await Promise.all(
+			result.map((inst) => {
+				return new Promise(async (resolve, reject) => {
+					if (inst.photo) inst.photo = await fs.readFile(`${paths.app}/${inst.photo}`, 'base64');
+					resolve(inst);
+				});
+			})
+		);
+
+		let data = { data: resultWithImage };
 		if (total) {
 			data.total = await Institution.countDocuments({});
 		}

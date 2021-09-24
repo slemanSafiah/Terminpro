@@ -1,13 +1,18 @@
 const { Exception, httpStatus } = require('../../../utils');
 const { generateToken, resetToken, verifyResetToken } = require('../../../utils/token/token');
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./User');
-const path = require('path');
 const fs = require('fs').promises;
 const sendEmail = require('../../../utils/helper/email');
 const generateCode = require('../../../utils/helper/generateCode');
 const paths = require('../../../paths');
+
+async function uploadImage(photo) {
+	let image = Buffer.from(photo, 'base64');
+	let fileName = Date.now().toString() + '.jpg';
+	await fs.writeFile(`./uploads/user/${fileName}`, image);
+	return `/uploads/user/${fileName}`;
+}
 
 class UserService {
 	constructor(data) {
@@ -27,10 +32,7 @@ class UserService {
 		const user = await User.findOne({ email: this.email });
 		if (user) throw new Exception(httpStatus.CONFLICT, 'User Already exists');
 		if (this.photo) {
-			let image = Buffer.from(this.photo, 'base64');
-			let fileName = Date.now().toString() + '.jpg';
-			this.photo = `/uploads/user/${fileName}`;
-			await fs.writeFile(`./uploads/user/${fileName}`, image);
+			this.photo = await uploadImage(this.photo);
 		}
 		const result = await new User(this).save();
 
@@ -39,25 +41,19 @@ class UserService {
 	}
 
 	static async updatePhoto(id, data) {
-		const session = await mongoose.startSession();
-		await session.withTransaction(async (session) => {
-			if (data.photo) {
-				let image = Buffer.from(data.photo, 'base64');
-				let fileName = Date.now().toString() + '.jpg';
-				let photo = `/uploads/user/${fileName}`;
-				await fs.writeFile(`./uploads/user/${fileName}`, image);
-				const result = await User.findOneAndUpdate(
-					{ _id: id },
-					{ photo: photo },
-					{
-						omitUndefined: true,
-						new: false,
-						session: session,
-					}
-				);
-				if (result.photo) await fs.unlink(`${paths.app}/${result.photo}`);
-			}
-		});
+		if (data.photo) {
+			const photo = await uploadImage(data.photo);
+			const result = await User.findOneAndUpdate(
+				{ _id: id },
+				{ photo: photo },
+				{
+					omitUndefined: true,
+					new: false,
+					useFindAndModify: false,
+				}
+			);
+			if (result.photo) await fs.unlink(`${paths.app}/${result.photo}`);
+		}
 		return;
 	}
 

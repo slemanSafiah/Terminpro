@@ -8,11 +8,9 @@
 
 *****************************     service     *****************************
 
-- add logic to be compitable with the plan
-
 *****************************     employee    *****************************
 
-- add logic to be compitable with the plan
+- handle recursive deletion
 
 *****************************     institution *****************************
 

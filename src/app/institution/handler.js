@@ -26,6 +26,14 @@ module.exports = {
 		res.sendStatus(httpStatus.UPDATED);
 	},
 
+	/** Update a photo */
+	updatePhoto: async (req, res) => {
+		const { id } = req.params;
+		const data = req.body;
+		await Institution.updatePhoto(id, data);
+		res.sendStatus(httpStatus.UPDATED);
+	},
+
 	/** add subscription to Institution */
 	subscribe: async (req, res) => {
 		const { id } = req.params;
@@ -45,8 +53,16 @@ module.exports = {
 	/** Add image to a slider */
 	addToSlider: async (req, res) => {
 		const { id } = req.params;
-		await Institution.addToSlider(id);
-		res.status(httpStatus.UPDATED);
+		const data = req.body;
+		await Institution.addToSlider(id, data);
+		res.sendStatus(httpStatus.UPDATED);
+	},
+
+	/** delete a photo */
+	deletePhoto: async (req, res) => {
+		const { id } = req.params;
+		await Institution.deletePhoto(id);
+		res.sendStatus(httpStatus.UPDATED);
 	},
 
 	/** delete institution */

@@ -1,6 +1,7 @@
 const { Exception, httpStatus } = require('../../../utils');
-
+const Institution = require('../institution/Institution');
 const Service = require('./Services');
+const Plan = require('../plan/Plan');
 
 class ServicesService {
 	constructor(data) {
@@ -16,6 +17,24 @@ class ServicesService {
 	}
 
 	async save() {
+		const institution = await Institution.findOne({ _id: this.institution }, 'subscription');
+
+		if (!institution) throw new Exception(httpStatus.NOT_FOUND, 'institution not found');
+
+		if (!institution.subscription.plan)
+			throw new Exception(httpStatus.NOT_FOUND, 'you must subscribe a plan before add service');
+
+		const plan = await Plan.findOne({ _id: institution.subscription.plan });
+
+		const services = await Service.countDocuments({ institution: this.institution });
+
+		if (services === plan.serviceLimit) {
+			throw new Exception(
+				httpStatus.BAD_REQUEST,
+				'you have reach the limit to add new service , update subscription to be able to complete this process'
+			);
+		}
+
 		const result = await new Service(this).save();
 
 		if (!result) throw new Exception();

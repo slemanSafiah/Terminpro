@@ -16,15 +16,15 @@ const InstitutionSchema = new Schema(
 		name: { type: String, required: true },
 		subtitle: { type: String, required: true },
 		description: { type: String, required: true },
-		category: { type: String,required: true },
+		category: { type: String, required: true },
 		subCategory: [String],
 		address: [Address],
 		rating: {
 			type: [Rating],
 		},
-		photo: { type: Schema.Types.Buffer },
+		photo: { type: String },
 		slider: {
-			type: [Schema.Types.Buffer],
+			type: [String],
 			validate: [arrayLimit, 'exceeds the limit of 10 image'],
 		},
 		paypalEmail: { type: String, default: '' },

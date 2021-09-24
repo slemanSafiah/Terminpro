@@ -2,13 +2,22 @@ const { Exception, httpStatus } = require('../../../utils');
 const mongoose = require('mongoose');
 const Employee = require('./Employee');
 const User = require('../user/User');
+const Plan = require('../plan/Plan');
 const bcrypt = require('bcryptjs');
 const { generateToken } = require('../../../utils/token/token');
 const Institution = require('../institution/Institution');
 const Service = require('../service/Services');
 const Appointment = require('../appointment/Appointment');
 const _ = require('lodash');
+const paths = require('../../../paths');
+const fs = require('fs').promises;
 
+async function uploadImage(photo) {
+	let image = Buffer.from(photo, 'base64');
+	let fileName = Date.now().toString() + '.jpg';
+	await fs.writeFile(`./uploads/employee/${fileName}`, image);
+	return `/uploads/employee/${fileName}`;
+}
 class EmployeeService {
 	constructor(data) {
 		this.institution = data.institution;
@@ -25,11 +34,25 @@ class EmployeeService {
 
 		if (emp) throw new Exception(httpStatus.CONFLICT, 'Employee already exists');
 
-		const inst = await Institution.findOne({ _id: this.institution });
+		const institution = await Institution.findOne({ _id: this.institution }, 'subscription');
 
-		if (!inst) throw new Exception(httpStatus.CONFLICT, 'Institution not found');
+		if (!institution) throw new Exception(httpStatus.NOT_FOUND, 'institution not found');
 
-		if (this.photo) this.photo = Buffer.from(this.photo, 'base64');
+		if (!institution.subscription.plan)
+			throw new Exception(httpStatus.NOT_FOUND, 'you must subscribe a plan before add service');
+
+		const plan = await Plan.findOne({ _id: institution.subscription.plan });
+
+		const employees = await Employee.countDocuments({ institution: this.institution });
+
+		if (employees === plan.employeeLimit) {
+			throw new Exception(
+				httpStatus.BAD_REQUEST,
+				'you have reach the limit to add new employee , update subscription to be able to complete this process'
+			);
+		}
+
+		if (this.photo) this.photo = await uploadImage(this.photo);
 
 		const result = await new Employee(this).save();
 
@@ -46,9 +69,19 @@ class EmployeeService {
 	}
 
 	static async updatePhoto(id, data) {
-		if (data.photo) data.photo = Buffer.from(data.photo, 'base64');
-
-		const result = await Employee.updateOne({ _id: id }, data);
+		if (data.photo) {
+			const photo = await uploadImage(data.photo);
+			const result = await Employee.findOneAndUpdate(
+				{ _id: id },
+				{ photo: photo },
+				{
+					omitUndefined: true,
+					new: false,
+					useFindAndModify: false,
+				}
+			);
+			if (result.photo) await fs.unlink(`${paths.app}/${result.photo}`);
+		}
 		return;
 	}
 
@@ -96,7 +129,8 @@ class EmployeeService {
 	}
 
 	static async deletePhoto(id) {
-		const result = await Employee.findOneAndUpdate({ _id: id }, { photo: null }, { useFindAndModify: false });
+		const result = await Employee.findOneAndUpdate({ _id: id }, { photo: null });
+		await fs.unlink(`${paths.app}/${result.photo}`);
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
 		return;
 	}
@@ -106,6 +140,7 @@ class EmployeeService {
 		const data = result.toObject({ virtuals: true });
 		delete data.rating;
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
+		if (result.photo) data.photo = await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
 		return { data: data };
 	}
 
@@ -166,11 +201,19 @@ class EmployeeService {
 
 	static async getEmployees(id) {
 		const result = await Employee.find({ institution: id }, '-password');
-		const data = result.map((emp) => {
-			let employee = emp.toObject({ virtuals: true });
-			delete employee.rating;
-			return employee;
-		});
+
+		let data = await Promise.all(
+			result.map((emp) => {
+				return new Promise(async (resolve, reject) => {
+					let employee = emp.toObject({ virtuals: true });
+					delete employee.rating;
+					if (isNaN(employee.rate)) employee.rate = 0;
+					if (emp.photo) emp.photo = await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
+					resolve(emp);
+				});
+			})
+		);
+
 		return { data: data };
 	}
 
@@ -186,7 +229,17 @@ class EmployeeService {
 			.sort({ firstName: criteria.sort })
 			.sort({ lastName: criteria.sort })
 			.lean();
-		let data = { data: result };
+
+		let resultWithImage = await Promise.all(
+			result.map((emp) => {
+				return new Promise(async (resolve, reject) => {
+					if (emp.photo) emp.photo = await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
+					resolve(emp);
+				});
+			})
+		);
+
+		let data = { data: resultWithImage };
 		if (total) {
 			data.total = await Employee.countDocuments({});
 		}
@@ -207,6 +260,7 @@ class EmployeeService {
 				photo: result.photo,
 				specialty: result.specialty,
 			};
+			data.photo = await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
 			return { data, token };
 		}
 		throw new Exception(httpStatus.NOT_FOUND, 'wrong password');

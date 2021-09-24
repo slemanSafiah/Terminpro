@@ -18,7 +18,7 @@ const EmployeeSchema = new Schema(
 			set: (val) => (val ? bcrypt.hashSync(val, 10) : undefined),
 		},
 		photo: {
-			type: Schema.Types.Buffer,
+			type: String,
 		},
 		rating: {
 			type: [Rating],

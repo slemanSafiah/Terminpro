@@ -18,11 +18,13 @@ router.put('/:id/unsubscribe', auth, validator.paramId, Exception.generalErrorHa
 
 router.put('/:id/rate', auth, validator.rate, Exception.generalErrorHandler(handler.rate));
 
-router.put('/:id/photo', auth, validator.paramId, Exception.generalErrorHandler(handler.update));
+router.put('/:id/photo', auth, validator.paramId, Exception.generalErrorHandler(handler.updatePhoto));
 
 router.put('/:id/slider', auth, validator.paramId, Exception.generalErrorHandler(handler.addToSlider));
 
 router.delete('/:id/slider', auth, validator.paramId, Exception.generalErrorHandler(handler.deleteFromSlider));
+
+router.delete('/:id/photo', auth, validator.paramId, Exception.generalErrorHandler(handler.deletePhoto));
 
 router.delete('/:id', auth, validator.paramId, Exception.generalErrorHandler(handler.delete));
 
