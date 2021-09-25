@@ -123,23 +123,24 @@ class EmployeeService {
 	}
 
 	static async delete(id) {
-		const result = await Employee.findOneAndDelete({ _id: id }, { useFindAndModify: false });
+		const result = await Employee.findOneAndDelete({ _id: id }, { useFindAndModify: false , new : false });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
+		if(result.photo)await fs.unlink(`${paths.app}/${result.photo}`);
 		return { msg: 'done' };
 	}
 
 	static async deletePhoto(id) {
-		const result = await Employee.findOneAndUpdate({ _id: id }, { photo: null });
-		await fs.unlink(`${paths.app}/${result.photo}`);
+		const result = await Employee.findOneAndUpdate({ _id: id }, { photo: null },{useFindAndModify : false});
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
+		await fs.unlink(`${paths.app}/${result.photo}`);
 		return;
 	}
 
 	static async getById(id) {
 		const result = await Employee.findOne({ _id: id }, '-password');
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
 		const data = result.toObject({ virtuals: true });
 		delete data.rating;
-		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
 		if (result.photo) data.photo = await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
 		return { data: data };
 	}
