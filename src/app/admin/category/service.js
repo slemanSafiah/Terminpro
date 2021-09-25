@@ -1,5 +1,14 @@
 const { Exception, httpStatus } = require('../../../../utils');
 const Category = require('./Category');
+const paths = require('../../../../paths');
+const fs = require('fs').promises;
+
+async function uploadImage(photo) {
+	let image = Buffer.from(photo, 'base64');
+	let fileName = Date.now().toString() + '.jpg';
+	await fs.writeFile(`./uploads/category/${fileName}`, image);
+	return `/uploads/category/${fileName}`;
+}
 
 class CategoryService {
 	constructor(data) {
@@ -8,7 +17,9 @@ class CategoryService {
 	}
 
 	async save() {
-		if (this.image) this.image = Buffer.from(this.image, 'base64');
+		if (this.image) {
+			this.image = await uploadImage(this.image);
+		}
 		const result = await new Category(this).save();
 		if (!result) throw new Exception();
 		return { data: { id: result._id } };
@@ -17,14 +28,15 @@ class CategoryService {
 	async update(id) {
 		const category = await Category.findOne({ _id: id });
 		if (!category) throw new Exception(httpStatus.CONFLICT, 'Category not found');
-		if (this.image) this.image = Buffer.from(this.image, 'base64');
+		if (this.image) this.image = await uploadImage(this.image);
 
-		const result = await Category.updateOne({ _id: id }, this, {
+		const result = await Category.findOneAndUpdate({ _id: id }, this, {
 			omitUndefined: true,
 			useFindAndModify: false,
-			new: true,
+			new: false,
 		});
-		if (!result.nModified) throw new Exception(httpStatus.INTERNAL_SERVER_ERROR, 'Error in update Category data');
+		if (!result) throw new Exception(httpStatus.INTERNAL_SERVER_ERROR, 'Error in update Category data');
+		if (result.image) await fs.unlink(`${paths.app}/${result.image}`);
 
 		return { data: result };
 	}
@@ -36,15 +48,28 @@ class CategoryService {
 	}
 
 	static async getById(id) {
-		const result = await Category.findById(id);
-		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Category not found');
-		return { data: result };
+		try {
+			const result = await Category.findById(id);
+			if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Category not found');
+			result.image = await fs.readFile(`${paths.app}/${result.image}`, 'base64');
+			return { data: result };
+		} catch (err) {
+			console.log(err);
+		}
 	}
 
 	static async getAllCategories() {
-		const result = await Category.find({});
+		const result = await Category.find({ name: 'category21' });
 		if (result.length === 0) throw new Exception(httpStatus.NOT_FOUND, 'no categories found');
-		return { data: result };
+		let data = await Promise.all(
+			result.map((cat) => {
+				return new Promise(async (resolve, reject) => {
+					if (cat.image) cat.image = await fs.readFile(`${paths.app}/${cat.image}`, 'base64');
+					resolve(cat);
+				});
+			})
+		);
+		return { data };
 	}
 }
 

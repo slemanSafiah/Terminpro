@@ -5,7 +5,7 @@ const CategorySchema = new Schema(
 	{
 		_id: { type: Schema.ObjectId, auto: true },
 		name: { type: String, require: true },
-		image: { type: Schema.Types.Buffer, require: true },
+		image: { type: String },
 	},
 	{
 		timestamps: true,
