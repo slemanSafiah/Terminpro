@@ -40,6 +40,7 @@
 		"nodemailer": "^6.6.3",
 		"paypal-adaptive": "^0.4.2",
 		"paypal-rest-sdk": "^1.8.1",
+		"pdf-creator-node": "^2.2.4",
 		"qs": "^6.7.0"
 	},
 	"devDependencies": {

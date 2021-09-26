@@ -11,7 +11,7 @@ const checkAppointment = require('../utils/helper/appointment');
 const app = express();
 
 //cron.schedule('*/10 * * * * *', checkSubscription);
-//cron.schedule('*/5 * * * * *', checkAppointment);
+cron.schedule('*/10 * * * * *', checkAppointment);
 
 // initial dotenv
 dotenv.config();
