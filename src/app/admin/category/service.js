@@ -48,23 +48,22 @@ class CategoryService {
 	}
 
 	static async getById(id) {
-		try {
+		//FIXME
 			const result = await Category.findById(id);
 			if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Category not found');
-			result.image = await fs.readFile(`${paths.app}/${result.image}`, 'base64');
+			result.image = process.env.IMAGE//await fs.readFile(`${paths.app}/${result.image}`, 'base64');
 			return { data: result };
-		} catch (err) {
-			console.log(err);
-		}
+
 	}
 
 	static async getAllCategories() {
+		//FIXME
 		const result = await Category.find({ });
 		if (result.length === 0) throw new Exception(httpStatus.NOT_FOUND, 'no categories found');
 		let data = await Promise.all(
 			result.map((cat) => {
 				return new Promise(async (resolve, reject) => {
-					if (cat.image) cat.image = await fs.readFile(`${paths.app}/${cat.image}`, 'base64');
+					if (cat.image) cat.image = process.env.IMAGE//await fs.readFile(`${paths.app}/${cat.image}`, 'base64');
 					resolve(cat);
 				});
 			})

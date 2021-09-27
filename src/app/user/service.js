@@ -118,14 +118,11 @@ class UserService {
 	}
 
 	static async getById(id) {
-		try {
-			const result = await User.findById(id, '-password');
-			if (result.photo) result.photo = await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
+		//FIXME	
+		const result = await User.findById(id, '-password');
 			if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
+			if (result.photo) result.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
 			return { data: result };
-		} catch (err) {
-			console.log(err);
-		}
 	}
 
 	static async getByCriteria(criteria, { limit, skip, total }) {
@@ -142,11 +139,11 @@ class UserService {
 			.sort({ firstName: criteria.sort })
 			.sort({ lastName: criteria.sort })
 			.lean();
-
+//FIXME
 		let resultWithImage = await Promise.all(
 			result.map((user) => {
 				return new Promise(async (resolve, reject) => {
-					if (user.photo) user.photo = await fs.readFile(`${paths.app}/${user.photo}`, 'base64');
+					if (user.photo) user.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${user.photo}`, 'base64');
 					resolve(user);
 				});
 			})
@@ -160,6 +157,7 @@ class UserService {
 	}
 
 	static async login(data) {
+		//FIXME
 		const result = await User.findOne({ email: data.email });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
 		let validPassword = await bcrypt.compare(data.password, result.password);
@@ -177,7 +175,7 @@ class UserService {
 				address: result.address,
 			};
 
-			if (data.photo) data.photo = await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
+			if (data.photo) data.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
 
 			return { data, token };
 		}

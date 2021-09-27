@@ -137,11 +137,12 @@ class EmployeeService {
 	}
 
 	static async getById(id) {
+		//FIXME
 		const result = await Employee.findOne({ _id: id }, '-password');
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
 		const data = result.toObject({ virtuals: true });
 		delete data.rating;
-		if (result.photo) data.photo = await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
+		if (result.photo) data.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
 		return { data: data };
 	}
 
@@ -202,14 +203,14 @@ class EmployeeService {
 
 	static async getEmployees(id) {
 		const result = await Employee.find({ institution: id }, '-password');
-
+		//FIXME
 		let data = await Promise.all(
 			result.map((emp) => {
 				return new Promise(async (resolve, reject) => {
 					let employee = emp.toObject({ virtuals: true });
 					delete employee.rating;
 					if (isNaN(employee.rate)) employee.rate = 0;
-					if (emp.photo) emp.photo = await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
+					if (emp.photo) emp.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
 					resolve(emp);
 				});
 			})
@@ -230,11 +231,11 @@ class EmployeeService {
 			.sort({ firstName: criteria.sort })
 			.sort({ lastName: criteria.sort })
 			.lean();
-
+		//FIXME
 		let resultWithImage = await Promise.all(
 			result.map((emp) => {
 				return new Promise(async (resolve, reject) => {
-					if (emp.photo) emp.photo = await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
+					if (emp.photo) emp.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
 					resolve(emp);
 				});
 			})
@@ -248,6 +249,7 @@ class EmployeeService {
 	}
 
 	static async login(data) {
+		//FIXME
 		const result = await Employee.findOne({ email: data.email });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
 		let validPassword = await bcrypt.compare(data.password, result.password);
@@ -261,7 +263,7 @@ class EmployeeService {
 				photo: result.photo,
 				specialty: result.specialty,
 			};
-			data.photo = await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
+			data.photo = process.env.IMAGE // await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
 			return { data, token };
 		}
 		throw new Exception(httpStatus.NOT_FOUND, 'wrong password');
