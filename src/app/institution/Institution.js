@@ -16,6 +16,7 @@ const InstitutionSchema = new Schema(
 		name: { type: String, required: true },
 		subtitle: { type: String, required: true },
 		description: { type: String, required: true },
+		phone : {type : String},
 		category: { type: String, required: true },
 		subCategory: [String],
 		address: [Address],

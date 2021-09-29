@@ -21,6 +21,7 @@ class InstitutionService {
 		this.name = data.name;
 		this.subtitle = data.subtitle;
 		this.description = data.description;
+		this.phone = data.phone;
 		this.category = data.category;
 		this.subCategory = data.subCategory;
 		this.address = data.address;
