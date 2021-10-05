@@ -33,4 +33,6 @@ router.post('/signup', validator.save, Exception.generalErrorHandler(handler.sig
 
 router.post('/login', validator.login, Exception.generalErrorHandler(handler.login));
 
+router.post('/contactUs', Exception.generalErrorHandler(handler.contactUs));
+
 module.exports = router;

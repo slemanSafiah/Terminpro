@@ -42,22 +42,25 @@ exports.prepareSubscription = async (data) => {
 
 exports.preparePayment = async (data) => {
 	const inst_id = data.institution;
-	const inst_info = await Institution.findOne({ _id: inst_id }, 'paypalEmail');
+	const inst_info = await Institution.findOne({ _id: inst_id }, 'paypalEmail hasRetainer retainer');
 
 	const email = inst_info.paypalEmail;
-
-	const prices = await Promise.all(
-		data.services.map((ser) => {
-			return new Promise(async (resolve, reject) => {
-				let res = await Service.findOne({ _id: ser });
-				resolve(res.retainer);
-			});
-		})
-	);
-
-	const tmp = prices.reduce((acc, curr) => {
-		return acc + curr;
-	}, 0);
+	let tmp;
+	if (inst_info.hasRetainer) {
+		tmp = inst_info.retainer;
+	} else {
+		const prices = await Promise.all(
+			data.services.map((ser) => {
+				return new Promise(async (resolve, reject) => {
+					let res = await Service.findOne({ _id: ser });
+					resolve(res.retainer);
+				});
+			})
+		);
+		const tmp = prices.reduce((acc, curr) => {
+			return acc + curr;
+		}, 0);
+	}
 
 	const amount = tmp + '.00';
 	console.log(email, amount);

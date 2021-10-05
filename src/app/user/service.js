@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const User = require('./User');
 const fs = require('fs').promises;
 const sendEmail = require('../../../utils/helper/email');
+const sendContactUsEmail = require('../../../utils/helper/contactusEmail');
 const generateCode = require('../../../utils/helper/generateCode');
 const paths = require('../../../paths');
 
@@ -91,6 +92,11 @@ class UserService {
 		return;
 	}
 
+	static async contactUs(data) {
+		await sendContactUsEmail(data.from_subject, data.from_email, data.from_name, data.message);
+		return;
+	}
+
 	static async resetPassword(token, password) {
 		const user = await User.findOne({ resetToken: token });
 		if (!user) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
@@ -118,11 +124,11 @@ class UserService {
 	}
 
 	static async getById(id) {
-		//FIXME	
+		//FIXME
 		const result = await User.findById(id, '-password');
-			if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
-			if (result.photo) result.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
-			return { data: result };
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
+		if (result.photo) result.photo = process.env.IMAGE; //await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
+		return { data: result };
 	}
 
 	static async getByCriteria(criteria, { limit, skip, total }) {
@@ -139,11 +145,11 @@ class UserService {
 			.sort({ firstName: criteria.sort })
 			.sort({ lastName: criteria.sort })
 			.lean();
-//FIXME
+		//FIXME
 		let resultWithImage = await Promise.all(
 			result.map((user) => {
 				return new Promise(async (resolve, reject) => {
-					if (user.photo) user.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${user.photo}`, 'base64');
+					if (user.photo) user.photo = process.env.IMAGE; //await fs.readFile(`${paths.app}/${user.photo}`, 'base64');
 					resolve(user);
 				});
 			})
@@ -175,7 +181,7 @@ class UserService {
 				address: result.address,
 			};
 
-			if (data.photo) data.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
+			if (data.photo) data.photo = process.env.IMAGE; //await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
 
 			return { data, token };
 		}

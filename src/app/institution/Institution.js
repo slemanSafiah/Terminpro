@@ -16,7 +16,7 @@ const InstitutionSchema = new Schema(
 		name: { type: String, required: true },
 		subtitle: { type: String, required: true },
 		description: { type: String, required: true },
-		phone : {type : String},
+		phone: { type: String },
 		category: { type: String, required: true },
 		subCategory: [String],
 		address: [Address],
@@ -39,6 +39,8 @@ const InstitutionSchema = new Schema(
 		notified: { type: Boolean, default: false },
 		freezed: { type: Boolean, default: false },
 		blocked: { type: Boolean, default: false },
+		retainer: { type: Number, default: 0 },
+		hasRetainer: { type: Boolean, default: false },
 	},
 	{
 		timestamps: true,

@@ -32,6 +32,8 @@ class InstitutionService {
 		this.closeAt = data.closeAt;
 		this.slider = data.slider;
 		this.subscription = data.subscription;
+		this.retainer = data.retainer;
+		this.hasRetainer = data.hasRetainer;
 	}
 
 	async save() {
@@ -219,12 +221,12 @@ class InstitutionService {
 		const data = result.toObject({ virtuals: true });
 		delete data.rating;
 		if (isNaN(data.rating)) data.rate = 0;
-		if (data.photo) data.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
+		if (data.photo) data.photo = process.env.IMAGE; //await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
 		data.slider = await Promise.all(
 			data.slider.map((img) => {
 				return new Promise(async (resolve, reject) => {
 					const fileName = img.split('/');
-					if (img) img = process.env.IMAGE//await fs.readFile(`${paths.app}/${img}`, 'base64');
+					if (img) img = process.env.IMAGE; //await fs.readFile(`${paths.app}/${img}`, 'base64');
 					resolve({ image: img, fileName: fileName[fileName.length - 1] });
 				});
 			})
@@ -254,7 +256,7 @@ class InstitutionService {
 		let resultWithImage = await Promise.all(
 			result.map((inst) => {
 				return new Promise(async (resolve, reject) => {
-					if (inst.photo) inst.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${inst.photo}`, 'base64');
+					if (inst.photo) inst.photo = process.env.IMAGE; //await fs.readFile(`${paths.app}/${inst.photo}`, 'base64');
 					resolve(inst);
 				});
 			})
