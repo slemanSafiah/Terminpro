@@ -13,7 +13,7 @@ const save = Joi.object({
 		date: Joi.string().required(),
 		end: Joi.string().required(),
 		history: Joi.number().required(),
-		service: Joi.objectId().required(),
+		service: Joi.array().required(),
 		institution: Joi.objectId().required(),
 		user: Joi.objectId().required(),
 		employee: Joi.objectId().required(),
