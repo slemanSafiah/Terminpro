@@ -2,8 +2,6 @@
 - remember offers
 - add weekend days to employee   (dashboard)
 
-- add lean() to some functions
-
 *****************************     user        *****************************
 
 *****************************     service     *****************************
@@ -13,8 +11,6 @@
 *****************************     institution *****************************
 
 *****************************     appointment *****************************
-
-- make archive to the appointment every year
 
 *****************************     payment     *****************************
 

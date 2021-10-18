@@ -18,7 +18,7 @@ const UserSchema = new Schema(
 			set: (val) => (val ? bcrypt.hashSync(val, 10) : undefined),
 		},
 		phone_1: { type: String, required: true },
-		phone_2: { type: String, unique: true },
+		phone_2: { type: String },
 		address: {
 			type: Address,
 		},

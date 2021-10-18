@@ -4,71 +4,70 @@ const User = require('../../src/app/user/User');
 const pdf = require('pdf-creator-node');
 const paths = require('../../paths');
 const fs = require('fs').promises;
-const months = ['Jan' , 'Feb' , 'Mar' , 'Apr' , 'May' , 'Jun' , 'Jul' , 'Aug' , 'Sep' , 'Oct', 'Nov', 'Dec'];
-const {checkDir} = require('./checkdir');
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const { checkDir } = require('./checkdir');
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 module.exports = async () => {
-	try{
-	const today = new Date();
-	const todayDate = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`;
-	const todayMinusYear = new Date();
+	try {
+		const today = new Date();
+		const todayDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+		const todayMinusYear = new Date();
 		//TODO test again with right data
-	todayMinusYear.setFullYear(todayMinusYear.getFullYear() - 1);
-	const appointments = await Appointment.find(
-		{ createdAt: { $lte: todayMinusYear } },
-		'date history user institution'
-	)
-		// .populate('user', 'firstName lastName -_id')
-		// .populate('institution', 'name -_id')
-		 .lean();
+		todayMinusYear.setFullYear(todayMinusYear.getFullYear() - 1);
+		const appointments = await Appointment.find(
+			{ createdAt: { $lte: todayMinusYear } },
+			'date history user institution'
+		)
+			.populate('user', 'firstName lastName -_id')
+			.populate('institution', 'name -_id')
+			.lean();
 
-	let appoints = appointments.map((ele) => {
-		let hist = ele.history.toString();
-		let appointment = { ...ele };
-		appointment.day = hist.substr(6, 2);
-		appointment.month = hist.substr(4, 2);
-		appointment.year = hist.substr(0, 4);
-		return appointment;
-	});
+		let appoints = appointments.map((ele) => {
+			let hist = ele.history.toString();
+			let appointment = {
+				firstName: ele.user.firstName,
+				lastName: ele.user.lastName,
+				institution: ele.institution.name,
+				time: ele.date,
+			};
+			appointment.day = hist.substr(6, 2);
+			appointment.month = hist.substr(4, 2);
+			appointment.year = hist.substr(0, 4);
+			return appointment;
+		});
 
-	
-	//TODO SAVE TO EXTERNAL FILE IN SPECIFIC STYLE
-	const path = `${paths.app}/uploads/appointment/${today.getFullYear()-1}/${months[((today.getMonth()-1)+12)%12]}/backup.pdf`;
-	await checkDir(`${paths.app}/uploads/appointment/${today.getFullYear()-1}/${((today.getMonth()-1)+12)%12}`);
-	await checkDir(path);
-	
-	if(appoints.length > 0){
-		//await fs.appendFile(path , JSON.stringify(appoints));
-		let html = await fs.readFile(`${paths.app}/utils/helper/appointment.html`,'utf-8');
-		const options = {
-			format : 'A4',
-			orientation : 'portrait',
-			border: "10mm"
-		}
+		//TODO SAVE TO EXTERNAL FILE IN SPECIFIC STYLE
+		const path = `${paths.app}/uploads/appointment/${today.getFullYear() - 1}/${
+			months[(today.getMonth() - 1 + 12) % 12]
+		}/backup.csv`;
+		await checkDir(
+			`${paths.app}/uploads/appointment/${today.getFullYear() - 1}/${(today.getMonth() - 1 + 12) % 12}`
+		);
+		await checkDir(path);
+		const csvWriter = createCsvWriter({
+			path: `${path}`,
+			header: [
+				{ id: 'time', title: 'Time' },
+				{ id: 'year', title: 'Year' },
+				{ id: 'month', title: 'Month' },
+				{ id: 'day', title: 'Day' },
+				{ id: 'firstName', title: 'FirstName' },
+				{ id: 'lastName', title: 'LastName' },
+				{ id: 'institution', title: 'Institution' },
+			],
+		});
 
-		const doc = {
-			html : html,
-			data : {
-				appointments:[...appoints, ...appoints],
-				today : todayDate
+		csvWriter.writeRecords(appoints).then(() => console.log('The CSV file was written successfully'));
+
+		const result = await Appointment.bulkWrite([
+			{
+				deleteMany: {
+					filter: { createdAt: { $lte: todayMinusYear } },
+				},
 			},
-			path : path
-		};
-
-		await pdf.create(doc , options);
-
+		]);
+	} catch (err) {
+		console.log(err);
 	}
-
-	console.log(appoints);
-
-	// const result = await Appointment.bulkWrite([
-	// 	{
-	// 		deleteMany: {
-	// 			filter: { createdAt: { $lte: todayMinusYear } },
-	// 		},
-	// 	},
-	// ]);
-}catch(err){
-	console.log(err)
-}
 };
