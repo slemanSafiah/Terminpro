@@ -45,7 +45,7 @@ exports.preparePayment = async (data) => {
 	const inst_info = await Institution.findOne({ _id: inst_id }, 'paypalEmail hasRetainer retainer');
 
 	const email = inst_info.paypalEmail;
-	let tmp;
+	let tmp = 0;
 	if (inst_info.hasRetainer) {
 		tmp = inst_info.retainer;
 	} else {
@@ -57,7 +57,7 @@ exports.preparePayment = async (data) => {
 				});
 			})
 		);
-		const tmp = prices.reduce((acc, curr) => {
+		tmp = prices.reduce((acc, curr) => {
 			return acc + curr;
 		}, 0);
 	}

@@ -28,10 +28,7 @@ class AppointmentService {
 		let appointment = await Appointment.findOne({
 			employee: this.employee,
 			history: this.history,
-			date: { $lte: this.end },
-			date: { $gte: this.date },
 		});
-		console.log(appointment);
 		if (appointment) throw new Exception(httpStatus.CONFLICT, "Appointment can't be reserved");
 
 		const result = await new Appointment(this).save();

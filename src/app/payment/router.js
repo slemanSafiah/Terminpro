@@ -88,17 +88,20 @@ router.post('/subscription/:id', auth, validator.checkout, validator.paramId, as
  */
 router.post('/pay/:id', auth, validator.adaptivePayment, validator.paramId, async (req, res) => {
 	const data = await paymentObject.preparePayment(req.body);
+	const header = {
+		'X-PAYPAL-SECURITY-USERID': process.env.USERIDPAYPAL,
+		'X-PAYPAL-SECURITY-PASSWORD': process.env.PASSWORD,
+		'X-PAYPAL-SECURITY-SIGNATURE': process.env.SIGNATURE,
+		'X-PAYPAL-REQUEST-DATA-FORMAT': 'JSON',
+		'X-PAYPAL-RESPONSE-DATA-FORMAT': 'JSON',
+		'X-PAYPAL-APPLICATION-ID': process.env.APPLICATIONID,
+		'X-PAYPAL-SERVICE-VERSION': '1.0.0',
+	};
+	console.log(header);
 	const result = await axios({
 		method: 'POST',
 		url: 'https://svcs.sandbox.paypal.com/AdaptivePayments/Pay',
-		headers: {
-			'X-PAYPAL-SECURITY-USERID': process.env.USERID,
-			'X-PAYPAL-SECURITY-PASSWORD': process.env.PASSWORD,
-			'X-PAYPAL-SECURITY-SIGNATURE': process.env.SIGNATURE,
-			'X-PAYPAL-REQUEST-DATA-FORMAT': 'JSON',
-			'X-PAYPAL-RESPONSE-DATA-FORMAT': 'JSON',
-			'X-PAYPAL-APPLICATION-ID': process.env.APPLICATIONID,
-		},
+		headers: header,
 		data: data,
 	});
 	if (result.data.responseEnvelope.ack === 'Success')
