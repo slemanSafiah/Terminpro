@@ -123,14 +123,14 @@ class EmployeeService {
 	}
 
 	static async delete(id) {
-		const result = await Employee.findOneAndDelete({ _id: id }, { useFindAndModify: false , new : false });
+		const result = await Employee.findOneAndDelete({ _id: id }, { useFindAndModify: false, new: false });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
-		if(result.photo)await fs.unlink(`${paths.app}/${result.photo}`);
+		if (result.photo) await fs.unlink(`${paths.app}/${result.photo}`);
 		return { msg: 'done' };
 	}
 
 	static async deletePhoto(id) {
-		const result = await Employee.findOneAndUpdate({ _id: id }, { photo: null },{useFindAndModify : false});
+		const result = await Employee.findOneAndUpdate({ _id: id }, { photo: null }, { useFindAndModify: false });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
 		await fs.unlink(`${paths.app}/${result.photo}`);
 		return;
@@ -142,7 +142,7 @@ class EmployeeService {
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
 		const data = result.toObject({ virtuals: true });
 		delete data.rating;
-		if (result.photo) data.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
+		if (result.photo) data.photo = process.env.IMAGE; //await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
 		return { data: data };
 	}
 
@@ -153,9 +153,7 @@ class EmployeeService {
 		const end = inst.closeAt;
 
 		let times = this.initialTimes(start, end);
-
 		let appointments = await Appointment.find({ employee: id }, 'date service -_id');
-
 		let busyTimes = await Promise.all(
 			appointments.map((app) => {
 				return new Promise(async (resolve, reject) => {
@@ -175,11 +173,13 @@ class EmployeeService {
 				});
 			})
 		);
+
 		busyTimes = busyTimes.map((ele) => {
 			let addMin = (ele.total - Math.floor(ele.total)) * 60; //30
-			if (addMin > 0 && addMin <= 15) addMin = 15;
-			else if (addMin <= 30) addMin = 30;
-			else if (addMin <= 45) addMin = 45;
+			if (addMin === 0) addMin = 0;
+			else if (addMin > 0 && addMin <= 15) addMin = 15;
+			else if (addMin > 15 && addMin <= 30) addMin = 30;
+			else if (addMin > 30 && addMin <= 45) addMin = 45;
 			else addMin = 60;
 			let addHour = Math.floor(ele.total); //1
 			let time = ele.start.split(':'); //['12 ' , ' 30']
@@ -210,7 +210,7 @@ class EmployeeService {
 					let employee = emp.toObject({ virtuals: true });
 					delete employee.rating;
 					if (isNaN(employee.rate)) employee.rate = 0;
-					if (emp.photo) emp.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
+					if (emp.photo) emp.photo = process.env.IMAGE; //await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
 					resolve(emp);
 				});
 			})
@@ -235,7 +235,7 @@ class EmployeeService {
 		let resultWithImage = await Promise.all(
 			result.map((emp) => {
 				return new Promise(async (resolve, reject) => {
-					if (emp.photo) emp.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
+					if (emp.photo) emp.photo = process.env.IMAGE; //await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
 					resolve(emp);
 				});
 			})
@@ -263,7 +263,7 @@ class EmployeeService {
 				photo: result.photo,
 				specialty: result.specialty,
 			};
-			data.photo = process.env.IMAGE // await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
+			data.photo = process.env.IMAGE; // await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
 			return { data, token };
 		}
 		throw new Exception(httpStatus.NOT_FOUND, 'wrong password');

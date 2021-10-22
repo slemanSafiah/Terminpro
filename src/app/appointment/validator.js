@@ -11,7 +11,6 @@ const paramId = Joi.object({
 const save = Joi.object({
 	body: {
 		date: Joi.string().required(),
-		end: Joi.string().required(),
 		history: Joi.number().required(),
 		service: Joi.array().required(),
 		institution: Joi.objectId().required(),
