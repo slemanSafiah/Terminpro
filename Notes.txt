@@ -1,7 +1,8 @@
 *****************************     general     *****************************
 - remember offers
 - add weekend days to employee   (dashboard)
-
+- send sms after book an appointment
+- check QRcode
 *****************************     user        *****************************
 
 *****************************     service     *****************************
