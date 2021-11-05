@@ -234,6 +234,25 @@ class InstitutionService {
 		return { data: data };
 	}
 
+	static async getByOwner(id) {
+		const result = await Institution.findOne({ owner: id }).populate('subscription');
+		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'No Institution Found');
+		const data = result.toObject({ virtuals: true });
+		delete data.rating;
+		if (isNaN(data.rating)) data.rate = 0;
+		if (data.photo) data.photo = process.env.IMAGE; //await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
+		data.slider = await Promise.all(
+			data.slider.map((img) => {
+				return new Promise(async (resolve, reject) => {
+					const fileName = img.split('/');
+					if (img) img = process.env.IMAGE; //await fs.readFile(`${paths.app}/${img}`, 'base64');
+					resolve({ image: img, fileName: fileName[fileName.length - 1] });
+				});
+			})
+		);
+		return { data: data };
+	}
+
 	static async getByPlan(id) {
 		const result = await Institution.find({ 'subscription.plan': id });
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'institutions not found');

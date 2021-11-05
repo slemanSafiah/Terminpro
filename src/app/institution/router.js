@@ -30,6 +30,8 @@ router.delete('/:id', auth, validator.paramId, Exception.generalErrorHandler(han
 
 router.get('/:id/plan', auth, validator.paramId, Exception.generalErrorHandler(handler.getByPlan));
 
+router.get('/:id/owner', auth, validator.paramId, Exception.generalErrorHandler(handler.getByOwner));
+
 router.get('/:id', validator.paramId, Exception.generalErrorHandler(handler.getById));
 
 router.get('/', validator.getByCriteria, Exception.generalErrorHandler(handler.getByCriteria));

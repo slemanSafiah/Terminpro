@@ -94,6 +94,12 @@ module.exports = {
 		res.status(httpStatus.OK).json(result);
 	},
 
+	getByOwner: async (req, res) => {
+		const { id } = req.params;
+		const result = await Institution.getByOwner(id);
+		res.status(httpStatus.OK).json(result);
+	},
+
 	// /** Get Institutions by criteria */
 	getByCriteria: async (req, res) => {
 		const criteria = _.pick(req.query, ['name', 'cat', 'subCat', 'sort']);
