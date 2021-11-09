@@ -142,7 +142,7 @@ class EmployeeService {
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Employee not found');
 		const data = result.toObject({ virtuals: true });
 		delete data.rating;
-		if (result.photo) data.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
+		if (result.photo) data.photo = await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
 		return { data: data };
 	}
 
@@ -210,7 +210,7 @@ class EmployeeService {
 					let employee = emp.toObject({ virtuals: true });
 					delete employee.rating;
 					if (isNaN(employee.rate)) employee.rate = 0;
-					if (emp.photo) emp.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
+					if (emp.photo) emp.photo = await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
 					resolve(emp);
 				});
 			})
@@ -235,7 +235,7 @@ class EmployeeService {
 		let resultWithImage = await Promise.all(
 			result.map((emp) => {
 				return new Promise(async (resolve, reject) => {
-					if (emp.photo) emp.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
+					if (emp.photo) emp.photo = await fs.readFile(`${paths.app}/${emp.photo}`, 'base64');
 					resolve(emp);
 				});
 			})
@@ -263,7 +263,7 @@ class EmployeeService {
 				photo: result.photo,
 				specialty: result.specialty,
 			};
-			data.photo = process.env.IMAGE//await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
+			data.photo = await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
 			return { data, token };
 		}
 		throw new Exception(httpStatus.NOT_FOUND, 'wrong password');
