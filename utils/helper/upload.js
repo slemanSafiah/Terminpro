@@ -3,9 +3,9 @@ const path = require('path');
 
 const upload = multer({
 	storage: multer.memoryStorage(),
-	limits: {
-		fileSize: 1024 * 1024 * 5,
-	},
+	// limits: {
+	// 	fileSize: 1024 * 1024 * 5,
+	// },
 	fileFilter: function (req, file, cb) {
 		checkFileType(req, file, cb);
 	},
