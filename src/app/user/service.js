@@ -127,7 +127,7 @@ class UserService {
 		//FIXME
 		const result = await User.findById(id, '-password');
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'User not found');
-		if (result.photo) result.photo = await fs.readFile(`${paths.app}/${result.photo}`, 'base64');
+		if (result.photo) result.photo = `http://161.35.193.253/media2/${result.photo.slice(9)}`;
 		return { data: result };
 	}
 
@@ -149,7 +149,7 @@ class UserService {
 		let resultWithImage = await Promise.all(
 			result.map((user) => {
 				return new Promise(async (resolve, reject) => {
-					if (user.photo) user.photo = await fs.readFile(`${paths.app}/${user.photo}`, 'base64');
+					if (user.photo) user.photo = `http://161.35.193.253/media2/${user.photo.slice(9)}`;
 					resolve(user);
 				});
 			})
@@ -181,7 +181,7 @@ class UserService {
 				address: result.address,
 			};
 
-			if (data.photo) data.photo = await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
+			if (data.photo) data.photo = `http://161.35.193.253/media2/${data.photo.slice(9)}`;
 
 			return { data, token };
 		}

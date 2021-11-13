@@ -51,7 +51,7 @@ class CategoryService {
 		//FIXME
 		const result = await Category.findById(id);
 		if (!result) throw new Exception(httpStatus.NOT_FOUND, 'Category not found');
-		result.image = await fs.readFile(`${paths.app}/${result.image}`, 'base64');
+		result.image = `http://161.35.193.253/media2/${result.image.slice(9)}`;
 		return { data: result };
 	}
 
@@ -62,7 +62,7 @@ class CategoryService {
 		let data = await Promise.all(
 			result.map((cat) => {
 				return new Promise(async (resolve, reject) => {
-					if (cat.image) cat.image = await fs.readFile(`${paths.app}/${cat.image}`, 'base64');
+					if (cat.image) cat.image = `http://161.35.193.253/media2/${cat.image.slice(9)}`;
 					resolve(cat);
 				});
 			})

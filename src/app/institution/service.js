@@ -221,12 +221,12 @@ class InstitutionService {
 		const data = result.toObject({ virtuals: true });
 		delete data.rating;
 		if (isNaN(data.rating)) data.rate = 0;
-		if (data.photo) data.photo = await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
+		if (data.photo) data.photo = `http://161.35.193.253/media2/${data.photo.slice(9)}`;
 		data.slider = await Promise.all(
 			data.slider.map((img) => {
 				return new Promise(async (resolve, reject) => {
 					const fileName = img.split('/');
-					if (img) img = await fs.readFile(`${paths.app}/${img}`, 'base64');
+					if (img) img = `http://161.35.193.253/media2/${img.slice(9)}`;
 					resolve({ image: img, fileName: fileName[fileName.length - 1] });
 				});
 			})
@@ -240,12 +240,12 @@ class InstitutionService {
 		const data = result.toObject({ virtuals: true });
 		delete data.rating;
 		if (isNaN(data.rating)) data.rate = 0;
-		if (data.photo) data.photo = await fs.readFile(`${paths.app}/${data.photo}`, 'base64');
+		if (data.photo) data.photo = `http://161.35.193.253/media2/${data.photo.slice(9)}`;
 		data.slider = await Promise.all(
 			data.slider.map((img) => {
 				return new Promise(async (resolve, reject) => {
 					const fileName = img.split('/');
-					if (img) img = await fs.readFile(`${paths.app}/${img}`, 'base64');
+					if (img) img = `http://161.35.193.253/media2/${img.slice(9)}`;
 					resolve({ image: img, fileName: fileName[fileName.length - 1] });
 				});
 			})
@@ -276,7 +276,7 @@ class InstitutionService {
 		let resultWithImage = await Promise.all(
 			result.map((inst) => {
 				return new Promise(async (resolve, reject) => {
-					if (inst.photo) inst.photo = await fs.readFile(`${paths.app}/${inst.photo}`, 'base64');
+					if (inst.photo) inst.photo = `http://161.35.193.253/media2/${inst.photo.slice(9)}`;
 					resolve(inst);
 				});
 			})
