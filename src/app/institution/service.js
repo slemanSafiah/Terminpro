@@ -69,7 +69,6 @@ class InstitutionService {
 					})
 				);
 
-			console.log(this);
 			result = await new Institution(this).save();
 			if (!result) throw new Exception();
 		});
