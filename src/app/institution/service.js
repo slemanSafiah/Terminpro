@@ -9,7 +9,7 @@ const fs = require('fs').promises;
 
 async function uploadImage(photo) {
 	let image = Buffer.from(photo, 'base64');
-	let fileName = Date.now().toString() + '.jpg';
+	let fileName = Date.now().toString() + Math.floor(Math.random() * 1e9).toString() + '.jpg';
 	await fs.writeFile(`./uploads/institution/${fileName}`, image);
 	return `/uploads/institution/${fileName}`;
 }
@@ -40,7 +40,7 @@ class InstitutionService {
 		let result;
 		const session = await mongoose.startSession();
 		await session.withTransaction(async (session) => {
-			const institution = await Institution.findOne({ email: this.email }).session(session);
+			const institution = await Institution.findOne({ email: this.email });
 			if (institution) throw new Exception(httpStatus.CONFLICT, 'Institution Already exists');
 
 			let categories = await Category.find({});
@@ -69,7 +69,8 @@ class InstitutionService {
 					})
 				);
 
-			result = await new Institution(this).save({ session });
+			console.log(this);
+			result = await new Institution(this).save();
 			if (!result) throw new Exception();
 		});
 		return { data: { id: result._id } };
